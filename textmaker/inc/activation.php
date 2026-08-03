@@ -17,9 +17,8 @@ defined( 'ABSPATH' ) || exit;
  * Nach dem Wechsel auf dieses Theme einmalig einrichten.
  */
 function textmaker_after_switch_theme(): void {
-	$front_id = textmaker_ensure_front_page();
-
-	textmaker_ensure_menus( $front_id );
+	textmaker_ensure_front_page();
+	textmaker_ensure_menus();
 }
 add_action( 'after_switch_theme', 'textmaker_after_switch_theme' );
 
@@ -92,10 +91,8 @@ function textmaker_ensure_front_page(): int {
 
 /**
  * Haupt- und Fussmenü aufbauen, falls noch keines zugewiesen ist.
- *
- * @param int $front_id ID der Startseite.
  */
-function textmaker_ensure_menus( int $front_id ): void {
+function textmaker_ensure_menus(): void {
 	$locations = get_theme_mod( 'nav_menu_locations', array() );
 	$locations = is_array( $locations ) ? $locations : array();
 
@@ -104,18 +101,7 @@ function textmaker_ensure_menus( int $front_id ): void {
 		$menu_id = textmaker_create_menu( __( 'Hauptmenü', 'textmaker' ) );
 
 		if ( $menu_id > 0 ) {
-			if ( $front_id > 0 ) {
-				textmaker_add_menu_item(
-					$menu_id,
-					array(
-						'menu-item-title'     => __( 'Home', 'textmaker' ),
-						'menu-item-object'    => 'page',
-						'menu-item-object-id' => $front_id,
-						'menu-item-type'      => 'post_type',
-					)
-				);
-			}
-
+			// Kein „Home“-Eintrag: das Logo führt bereits zur Startseite.
 			$anchors = array(
 				'#lektorat'   => __( 'Lektorat-Service', 'textmaker' ),
 				'#preise'     => __( 'Preise', 'textmaker' ),

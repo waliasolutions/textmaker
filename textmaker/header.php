@@ -68,12 +68,12 @@ defined( 'ABSPATH' ) || exit;
 			} else {
 				echo '<ul class="nav" id="hauptmenue">';
 
+				// Kein „Home“ — dafür ist das Logo da.
 				$textmaker_fallback = array(
-					home_url( '/' ) => __( 'Home', 'textmaker' ),
-					'#lektorat'     => __( 'Lektorat-Service', 'textmaker' ),
-					'#preise'       => __( 'Preise', 'textmaker' ),
-					'#referenzen'   => __( 'Referenzen', 'textmaker' ),
-					'#anfragen'     => __( 'Offerte anfragen', 'textmaker' ),
+					'#lektorat'   => __( 'Lektorat-Service', 'textmaker' ),
+					'#preise'     => __( 'Preise', 'textmaker' ),
+					'#referenzen' => __( 'Referenzen', 'textmaker' ),
+					'#anfragen'   => __( 'Offerte anfragen', 'textmaker' ),
 				);
 
 				foreach ( $textmaker_fallback as $textmaker_url => $textmaker_label ) {

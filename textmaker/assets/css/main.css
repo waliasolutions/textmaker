@@ -36,6 +36,14 @@
 	--gutter: clamp(1.25rem, 4vw, 3rem);
 	--band:   clamp(3.75rem, 6.5vw, 6rem);
 	--radius: 3px;
+
+	/* Höhe der Kopfzeile — steuert zugleich den Startpunkt des mobilen Menüs
+	   und den Abstand der Sprungziele. Nur hier ändern. */
+	--head-h: 88px;
+}
+
+@media (max-width: 900px) {
+	:root { --head-h: 74px; }
 }
 
 /* --- Grundlagen ---------------------------------------------------------- */
@@ -48,7 +56,7 @@ html {
 	margin: 0;
 	padding: 0;
 	/* Sprungziele nicht unter der klebenden Kopfzeile ausrichten. */
-	scroll-padding-top: 84px;
+	scroll-padding-top: calc(var(--head-h) + 16px);
 	scroll-behavior: smooth;
 }
 
@@ -182,18 +190,20 @@ button { font: inherit; color: inherit; }
 	align-items: center;
 	justify-content: space-between;
 	gap: 1.5rem;
-	min-height: 70px;
+	min-height: var(--head-h);
 }
 
+.site-logo { display: flex; }
+.site-logo a { display: block; }
 .site-logo img {
-	max-height: 40px;
+	max-height: 54px;
 	width: auto;
 }
 
 .wordmark {
 	font-weight: 700;
 	letter-spacing: -.02em;
-	font-size: 1.35rem;
+	font-size: 1.7rem;
 	text-decoration: none;
 	white-space: nowrap;
 	color: var(--on-dark);
@@ -203,16 +213,16 @@ button { font: inherit; color: inherit; }
 .nav {
 	display: flex;
 	align-items: center;
-	gap: clamp(1rem, 2.2vw, 2rem);
+	gap: clamp(1.1rem, 2.4vw, 2.25rem);
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 .nav a {
 	text-decoration: none;
-	font-size: var(--s-sm);
+	font-size: var(--s-md);
 	font-weight: 500;
-	padding: .35rem 0;
+	padding: .4rem 0;
 	position: relative;
 	color: var(--on-dark);
 	display: inline-block;
@@ -256,27 +266,36 @@ button { font: inherit; color: inherit; }
 @media (max-width: 900px) {
 	.burger { display: block; }
 
+	.site-logo img { max-height: 42px; }
+	.wordmark { font-size: 1.45rem; }
+
 	.nav {
 		position: fixed;
-		inset: 70px 0 auto 0;
+		inset: var(--head-h) 0 auto 0;
 		flex-direction: column;
 		align-items: stretch;
 		gap: 0;
 		background: var(--ink);
 		border-bottom: 1px solid var(--on-dark-line);
-		padding: .5rem var(--gutter) 1.25rem;
+		padding: .25rem var(--gutter) 1.25rem;
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity .2s ease;
+		/* Sehr lange Menüs bleiben erreichbar. */
+		max-height: calc(100svh - var(--head-h));
+		overflow-y: auto;
 	}
 	.nav[data-open="true"] { opacity: 1; pointer-events: auto; }
 	.nav a {
-		padding: .85rem 0;
+		padding: .95rem 0;
 		border-bottom: 1px solid var(--on-dark-line);
-		font-size: var(--s-md);
+		font-size: var(--s-lg);
 		display: block;
 	}
 	.nav a::after { display: none; }
+	.nav li:last-child a { border-bottom: 0; }
+
+	body.admin-bar .nav { inset: calc(var(--head-h) + 46px) 0 auto 0; }
 }
 
 /* --- Hero ---------------------------------------------------------------- */
