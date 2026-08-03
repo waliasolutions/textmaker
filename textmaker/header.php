@@ -72,6 +72,7 @@ defined( 'ABSPATH' ) || exit;
 				$textmaker_fallback = array(
 					'#lektorat'   => __( 'Lektorat-Service', 'textmaker' ),
 					'#preise'     => __( 'Preise', 'textmaker' ),
+					'#fragen'     => __( 'Fragen', 'textmaker' ),
 					'#referenzen' => __( 'Referenzen', 'textmaker' ),
 					'#anfragen'   => __( 'Offerte anfragen', 'textmaker' ),
 				);

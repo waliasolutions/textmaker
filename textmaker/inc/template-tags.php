@@ -35,6 +35,10 @@ function textmaker_defaults(): array {
 		'reviews_heading'   => 'Kundenmeinungen',
 		'reviews_elfsight'  => '6a505a69-02af-4f6a-8f46-ca7603d08c2e',
 
+		// Fragen & Antworten.
+		'faq_heading'       => 'Häufige Fragen',
+		'faq_intro'         => 'Kurz und direkt beantwortet. Fehlt deine Frage? Schreib uns.',
+
 		// Ablauf.
 		'steps_heading'     => 'So läuft die Korrektur ab',
 		'steps_intro'       => 'Du erhältst dein Dokument mit nachvollziehbaren Änderungen zurück — du entscheidest, was du übernimmst.',
@@ -69,6 +73,10 @@ function textmaker_defaults(): array {
 		'footer_legal_heading' => 'Rechtliches',
 		'footer_copyright'  => '© teXtmaker.ch — we write what you think',
 
+		// Auffindbarkeit.
+		'meta_title_suffix' => 'Lektorat & Korrektorat aus Zug',
+		'meta_description'  => 'teXtmaker lektoriert und korrigiert Magazine, Berichte, Broschüren und Abschlussarbeiten — Rechtschreibung, Grammatik, Stil und roter Faden. Nach dem 4-Augen-Prinzip, in 1 bis 5 Tagen, aus Zug für die ganze Schweiz.',
+
 		// Tracking.
 		'gtm_id'            => 'GTM-PZKN5CC',
 
@@ -89,6 +97,7 @@ function textmaker_sections(): array {
 		'reviews' => __( 'Kundenmeinungen', 'textmaker' ),
 		'steps'   => __( 'Ablauf der Korrektur', 'textmaker' ),
 		'prices'  => __( 'Lektorate / Preise', 'textmaker' ),
+		'faq'     => __( 'Fragen & Antworten', 'textmaker' ),
 		'contact' => __( 'Offerte anfragen', 'textmaker' ),
 		'refs'    => __( 'Referenzen', 'textmaker' ),
 	);

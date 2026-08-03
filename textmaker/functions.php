@@ -28,6 +28,8 @@ require_once TEXTMAKER_DIR . '/inc/activation.php';
 require_once TEXTMAKER_DIR . '/inc/customizer.php';
 require_once TEXTMAKER_DIR . '/inc/template-tags.php';
 require_once TEXTMAKER_DIR . '/inc/gtm.php';
+require_once TEXTMAKER_DIR . '/inc/seo.php';
+require_once TEXTMAKER_DIR . '/inc/sitemap.php';
 require_once TEXTMAKER_DIR . '/inc/contact-form.php';
 
 if ( is_admin() ) {

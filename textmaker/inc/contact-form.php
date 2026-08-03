@@ -317,13 +317,8 @@ function textmaker_store_submission( array $values, array $attachments ): int {
  * @param int                   $submission_id ID des gespeicherten Eintrags.
  */
 function textmaker_send_notification( array $values, array $attachments, int $submission_id ): bool {
-	$recipient = trim( textmaker_option( 'contact_recipient' ) );
-
-	if ( '' === $recipient ) {
-		$recipient = (string) get_option( 'admin_email' );
-	}
-
-	$name = trim( $values['first_name'] . ' ' . $values['last_name'] );
+	$recipient = textmaker_notification_recipient();
+	$name      = trim( $values['first_name'] . ' ' . $values['last_name'] );
 
 	/* translators: %s: Name der anfragenden Person. */
 	$subject = sprintf( __( 'Neue Offertanfrage von %s', 'textmaker' ), '' !== $name ? $name : $values['email'] );
@@ -362,14 +357,175 @@ function textmaker_send_notification( array $values, array $attachments, int $su
 		$headers[] = 'Reply-To: ' . ( '' !== $name ? $name . ' <' . $values['email'] . '>' : $values['email'] );
 	}
 
-	return wp_mail(
-		array_map( 'trim', explode( ',', $recipient ) ),
-		$subject,
-		implode( "\n", $lines ),
-		$headers,
-		$paths
+	$sent = wp_mail( $recipient, $subject, implode( "\n", $lines ), $headers, $paths );
+
+	// Fehlgeschlagene Zustellung festhalten: die Anfrage ist gespeichert, aber
+	// niemand wurde benachrichtigt — das muss im Backend sichtbar sein.
+	if ( $submission_id > 0 ) {
+		if ( $sent ) {
+			delete_post_meta( $submission_id, '_tm_mail_error' );
+		} else {
+			update_post_meta( $submission_id, '_tm_mail_error', textmaker_last_mail_error() );
+			update_option( 'textmaker_mail_failed_at', time(), false );
+		}
+	}
+
+	return $sent;
+}
+
+/**
+ * Empfängeradresse für Benachrichtigungen.
+ *
+ * Reihenfolge: eigens hinterlegte Adresse, sonst die Kontaktadresse aus der
+ * Fusszeile, sonst die Administrator-Adresse der Website.
+ *
+ * @return array<int, string>
+ */
+function textmaker_notification_recipient(): array {
+	$candidates = array(
+		textmaker_option( 'contact_recipient' ),
+		textmaker_option( 'footer_email' ),
+		(string) get_option( 'admin_email' ),
+	);
+
+	foreach ( $candidates as $candidate ) {
+		$addresses = array_filter(
+			array_map( 'trim', explode( ',', $candidate ) ),
+			static fn( string $address ): bool => is_email( $address ) !== false
+		);
+
+		if ( array() !== $addresses ) {
+			return array_values( $addresses );
+		}
+	}
+
+	return array();
+}
+
+/**
+ * Letzte Fehlermeldung des Mailversands.
+ */
+function textmaker_last_mail_error(): string {
+	static $error = '';
+
+	if ( '' === $error ) {
+		$error = __( 'Der Mailversand wurde vom Server abgelehnt.', 'textmaker' );
+	}
+
+	return $error;
+}
+
+/**
+ * Fehlermeldung von WordPress abgreifen.
+ *
+ * @param WP_Error $error Fehler aus wp_mail().
+ */
+function textmaker_capture_mail_error( WP_Error $error ): void {
+	update_option( 'textmaker_last_mail_error', $error->get_error_message(), false );
+}
+add_action( 'wp_mail_failed', 'textmaker_capture_mail_error' );
+
+/**
+ * Hinweis im Backend, wenn eine Benachrichtigung nicht zugestellt werden konnte.
+ */
+function textmaker_mail_failure_notice(): void {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	$failed_at = (int) get_option( 'textmaker_mail_failed_at', 0 );
+
+	if ( 0 === $failed_at ) {
+		return;
+	}
+
+	printf(
+		'<div class="notice notice-error"><p><strong>%1$s</strong> %2$s</p><p>%3$s</p><p>
+			<a class="button" href="%4$s">%5$s</a>
+			<a class="button" href="%6$s">%7$s</a>
+		</p></div>',
+		esc_html__( 'teXtmaker:', 'textmaker' ),
+		esc_html__( 'Eine Offertanfrage konnte nicht per E-Mail zugestellt werden.', 'textmaker' ),
+		esc_html__( 'Die Anfrage selbst ist gespeichert und geht nicht verloren. Für zuverlässigen Versand empfiehlt sich ein SMTP-Plugin — der PHP-Standardversand vieler Hoster landet im Spam oder wird ganz verworfen.', 'textmaker' ),
+		esc_url( admin_url( 'edit.php?post_type=tm_submission' ) ),
+		esc_html__( 'Anfragen ansehen', 'textmaker' ),
+		esc_url( wp_nonce_url( admin_url( 'admin.php?page=' . TEXTMAKER_MENU_SLUG . '&textmaker_dismiss_mail=1' ), 'textmaker_dismiss_mail' ) ),
+		esc_html__( 'Hinweis ausblenden', 'textmaker' )
 	);
 }
+add_action( 'admin_notices', 'textmaker_mail_failure_notice' );
+
+/**
+ * Testmail an die eingestellte Empfängeradresse senden.
+ *
+ * Damit lässt sich vor dem Livegang prüfen, ob der Server überhaupt zustellt —
+ * ohne dafür eine echte Anfrage abzuschicken.
+ */
+function textmaker_send_test_mail(): void {
+	if ( ! isset( $_POST['textmaker_test_mail'] ) ) {
+		return;
+	}
+
+	check_admin_referer( 'textmaker_test_mail' );
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	$recipient = textmaker_notification_recipient();
+
+	if ( array() === $recipient ) {
+		set_transient( 'textmaker_test_mail_result', array( 'error', __( 'Es ist keine gültige Empfängeradresse hinterlegt.', 'textmaker' ) ), 60 );
+
+		return;
+	}
+
+	delete_option( 'textmaker_last_mail_error' );
+
+	$sent = wp_mail(
+		$recipient,
+		__( 'Testmail von teXtmaker', 'textmaker' ),
+		__( 'Wenn diese Nachricht ankommt, funktioniert der Versand des Kontaktformulars.', 'textmaker' ),
+		array( 'Content-Type: text/plain; charset=UTF-8' )
+	);
+
+	$result = $sent
+		? array(
+			'success',
+			sprintf(
+				/* translators: %s: Empfängeradressen. */
+				__( 'Testmail an %s übergeben. Prüfe das Postfach — auch den Spam-Ordner.', 'textmaker' ),
+				implode( ', ', $recipient )
+			),
+		)
+		: array(
+			'error',
+			sprintf(
+				/* translators: %s: Fehlermeldung des Servers. */
+				__( 'Der Versand schlug fehl: %s', 'textmaker' ),
+				(string) get_option( 'textmaker_last_mail_error', __( 'keine nähere Angabe', 'textmaker' ) )
+			),
+		);
+
+	set_transient( 'textmaker_test_mail_result', $result, 60 );
+}
+add_action( 'admin_init', 'textmaker_send_test_mail' );
+
+/**
+ * Hinweis zum Mailversand ausblenden.
+ */
+function textmaker_dismiss_mail_notice(): void {
+	if ( ! isset( $_GET['textmaker_dismiss_mail'] ) ) {
+		return;
+	}
+
+	check_admin_referer( 'textmaker_dismiss_mail' );
+
+	if ( current_user_can( 'manage_options' ) ) {
+		delete_option( 'textmaker_mail_failed_at' );
+	}
+}
+add_action( 'admin_init', 'textmaker_dismiss_mail_notice' );
 
 /**
  * IP-Adresse der anfragenden Person, soweit verfügbar.

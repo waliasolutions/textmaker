@@ -124,6 +124,36 @@ function textmaker_customizer_sections(): array {
 				),
 			),
 		),
+		'faq'      => array(
+			'title'       => __( 'Fragen & Antworten', 'textmaker' ),
+			'description' => __( 'Die Fragen selbst werden unter „teXtmaker → Fragen & Antworten“ gepflegt. Sie erscheinen auf der Startseite und werden zusätzlich maschinenlesbar ausgeliefert, damit Suchmaschinen und KI-Assistenten daraus zitieren können.', 'textmaker' ),
+			'fields'      => array(
+				'faq_heading' => array(
+					'label' => __( 'Überschrift', 'textmaker' ),
+					'type'  => 'text',
+				),
+				'faq_intro'   => array(
+					'label' => __( 'Einleitung', 'textmaker' ),
+					'type'  => 'textarea',
+				),
+			),
+		),
+		'seo'      => array(
+			'title'       => __( 'Auffindbarkeit', 'textmaker' ),
+			'description' => __( 'Titel und Beschreibung für Suchergebnisse, Linkvorschauen und KI-Assistenten. Ist ein SEO-Plugin aktiv, hat dessen Einstellung Vorrang.', 'textmaker' ),
+			'fields'      => array(
+				'meta_title_suffix' => array(
+					'label'       => __( 'Zusatz im Seitentitel', 'textmaker' ),
+					'type'        => 'text',
+					'description' => __( 'Erscheint hinter dem Websitenamen, z. B. „Lektorat & Korrektorat aus Zug“.', 'textmaker' ),
+				),
+				'meta_description'  => array(
+					'label'       => __( 'Beschreibung der Startseite', 'textmaker' ),
+					'type'        => 'textarea',
+					'description' => __( 'Zwei bis drei Sätze, rund 150 Zeichen. Sag konkret, was ihr macht, für wen und wo — danach suchen Menschen und Antwortmaschinen.', 'textmaker' ),
+				),
+			),
+		),
 		'contact'  => array(
 			'title'       => __( 'Offerte anfragen', 'textmaker' ),
 			'description' => __( 'Kontaktformular und Team-Spalte. Die Porträts werden unter „teXtmaker → Team“ gepflegt.', 'textmaker' ),

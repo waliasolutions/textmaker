@@ -105,6 +105,7 @@ function textmaker_ensure_menus(): void {
 			$anchors = array(
 				'#lektorat'   => __( 'Lektorat-Service', 'textmaker' ),
 				'#preise'     => __( 'Preise', 'textmaker' ),
+				'#fragen'     => __( 'Fragen', 'textmaker' ),
 				'#referenzen' => __( 'Referenzen', 'textmaker' ),
 				'#anfragen'   => __( 'Offerte anfragen', 'textmaker' ),
 			);

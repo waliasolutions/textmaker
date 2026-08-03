@@ -33,6 +33,10 @@ get_header();
 		get_template_part( 'template-parts/section', 'prices' );
 	}
 
+	if ( textmaker_show_section( 'faq' ) ) {
+		get_template_part( 'template-parts/section', 'faq' );
+	}
+
 	if ( textmaker_show_section( 'contact' ) ) {
 		get_template_part( 'template-parts/section', 'contact' );
 	}

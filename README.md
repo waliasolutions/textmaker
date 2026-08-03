@@ -130,6 +130,55 @@ der Abschnitt.
 
 ---
 
+## Auffindbarkeit: Suchmaschinen und KI-Assistenten
+
+**Seitentitel und Beschreibung** stehen im Customizer unter *Auffindbarkeit*. Einzelne Seiten
+bekommen unter dem Editor ein eigenes Feld „Beschreibung für Suchmaschinen“; bleibt es leer,
+wird der Textauszug verwendet. Ausgegeben werden `description`, `canonical`, Open Graph und
+Twitter-Card — Letztere bestimmen, wie ein Link in WhatsApp, LinkedIn oder Slack aussieht.
+
+Ist ein SEO-Plugin aktiv (Yoast, Rank Math, SEOPress, AIOSEO), hält sich das Theme mit den
+Meta-Tags komplett heraus. Doppelte Angaben schaden mehr, als sie nützen.
+
+**Strukturierte Daten** liefert das Theme immer — auch neben einem SEO-Plugin, weil die wenigsten
+Plugins Leistungen und Preise sauber abbilden. Ausgegeben wird ein zusammenhängender
+`schema.org`-Graph:
+
+- `ProfessionalService` mit Adresse, Telefon, E-Mail, Sprachen und Einzugsgebiet,
+- `OfferCatalog` aus den Dienstleistungen der Fusszeile,
+- `Service` mit den Richtpreisen als `Offer` in CHF,
+- `FAQPage` aus den gepflegten Fragen,
+- `BreadcrumbList` auf Unterseiten.
+
+**Warum das für Antwortmaschinen zählt:** Systeme wie Google-Übersichten, ChatGPT oder Perplexity
+beantworten Fragen, statt Links zu listen. Sie zitieren am ehesten Text, der eine Frage direkt
+beantwortet und maschinenlesbar ausgezeichnet ist. Genau dafür gibt es **teXtmaker → Fragen &
+Antworten**: Jede Frage ist ein eigener Eintrag, erscheint auf der Startseite als aufklappbare
+Antwort und wird zusätzlich als `FAQPage` ausgeliefert.
+
+Was dort gut funktioniert: eine echte Frage als Titel („Was kostet ein Lektorat?“), die Antwort
+im ersten Satz vollständig, konkrete Zahlen und Orte statt Werbesprache. Was nicht funktioniert:
+Überschriften wie „Unsere Vorteile“ und Antworten, die erst im dritten Satz zur Sache kommen.
+
+## Sitemap
+
+Erreichbar unter `/sitemap.xml`. Sie wird bei jedem Abruf erzeugt, statt als Datei im
+Wurzelverzeichnis zu liegen — so veraltet sie nicht, wenn Seiten dazukommen. Enthalten sind die
+Startseite sowie alle veröffentlichten Seiten und Beiträge mit ihrem Änderungsdatum. Die internen
+Inhaltstypen des Themes bleiben draussen, sie haben keine eigenen Adressen. Die `robots.txt`
+verweist automatisch darauf.
+
+Die Adresse wird über eine Rewrite-Regel bedient, die beim Aktivieren des Themes eingerichtet
+wird. Liefert `/sitemap.xml` einen 404, einmal **Einstellungen → Permalinks** speichern.
+
+WordPress' eigenes `/wp-sitemap.xml` bleibt daneben bestehen.
+
+## Website-Symbol (Favicon)
+
+Der Medien-Import holt das Symbol aus der Live-Domain und trägt es als Website-Symbol ein.
+Ändern lässt es sich unter **Design → Customizer → Website-Informationen → Website-Symbol**.
+WordPress erzeugt daraus alle benötigten Grössen inklusive Apple-Touch-Icon.
+
 ## Kontaktformular
 
 Das Formular läuft nativ im Theme, ohne Plugin:
@@ -143,8 +192,27 @@ Das Formular läuft nativ im Theme, ohne Plugin:
   doppelt verschickt.
 - Jede Anfrage wird **zusätzlich** unter *Anfragen* gespeichert — geht der Mailversand schief,
   ist die Anfrage trotzdem da.
-- Der Mailversand nutzt `wp_mail()` mit `Reply-To` der anfragenden Person. Empfänger ist die im
-  Customizer hinterlegte Adresse, sonst die Administrator-Adresse.
+### Kommen die E-Mails an?
+
+Der Versand läuft über `wp_mail()`, mit `Reply-To` der anfragenden Person. Empfänger ist die im
+Customizer hinterlegte Adresse; ist dort nichts eingetragen, die Kontaktadresse aus der Fusszeile
+(`staff@textmaker.ch`), sonst die Administrator-Adresse der Website.
+
+**Ob eine Mail tatsächlich ankommt, entscheidet der Server, nicht das Theme.** Ohne SMTP verschickt
+WordPress über PHPs `mail()`. Diese Nachrichten tragen keine SPF- oder DKIM-Signatur der Absender-
+domain — Gmail, Outlook und die meisten Firmen-Postfächer stufen sie als Spam ein oder verwerfen
+sie kommentarlos. Das ist der häufigste Grund für „das Formular funktioniert nicht“.
+
+Deshalb:
+
+- **Vor dem Livegang prüfen.** Unter **teXtmaker → Übersicht** steht die aktuelle Empfängeradresse,
+  darunter der Knopf *Testmail senden*. Kommt sie an (auch im Spam-Ordner nachsehen), stimmt die
+  Kette. Kommt sie nicht an, meldet WordPress den Serverfehler direkt zurück.
+- **SMTP einrichten.** Ein SMTP-Plugin mit den Zugangsdaten des eigenen Mailanbieters und der
+  eigenen Domain als Absender löst das Problem dauerhaft.
+- **Nichts geht verloren.** Jede Anfrage wird unabhängig vom Mailversand unter *Anfragen*
+  gespeichert. Schlägt der Versand fehl, erscheint im Backend eine Warnung mit der Fehlermeldung
+  des Servers, und der Fehler wird an der betroffenen Anfrage vermerkt.
 
 Grenzen und erlaubte Typen sind filterbar:
 

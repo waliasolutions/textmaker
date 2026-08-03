@@ -30,7 +30,7 @@
 	--s-lg:  1.1875rem;
 	--s-xl:  clamp(1.35rem, 1.1rem + 1.1vw, 1.8rem);
 	--s-2xl: clamp(1.7rem, 1.3rem + 1.8vw, 2.5rem);
-	--s-3xl: clamp(2.1rem, 1.5rem + 2.8vw, 3.4rem);
+	--s-3xl: clamp(2.4rem, 1.6rem + 3.6vw, 4.4rem);
 
 	--frame:  1180px;
 	--gutter: clamp(1.25rem, 4vw, 3rem);
@@ -304,10 +304,10 @@ button { font: inherit; color: inherit; }
 	position: relative;
 	background: var(--ink);
 	color: var(--on-dark);
-	min-height: min(86svh, 780px);
+	min-height: min(94svh, 940px);
 	display: grid;
 	align-content: center;
-	padding-block: clamp(3.5rem, 10vh, 6rem) 5rem;
+	padding-block: clamp(5rem, 14vh, 9rem) clamp(5rem, 12vh, 8rem);
 	overflow: hidden;
 }
 /* Ohne Hintergrundbild: leise Aufhellung, damit die Fläche nicht flach wirkt. */
@@ -342,9 +342,9 @@ button { font: inherit; color: inherit; }
 .hero h1 {
 	font-size: var(--s-3xl);
 	font-weight: 600;
-	line-height: 1.2;
-	max-width: 20ch;
-	letter-spacing: -.01em;
+	line-height: 1.14;
+	max-width: 17ch;
+	letter-spacing: -.015em;
 }
 .hero h1 u {
 	text-decoration: underline;
@@ -416,38 +416,57 @@ button { font: inherit; color: inherit; }
 
 /* --- Leistungs-Check ----------------------------------------------------- */
 
-.checks {
+/* Zwei Spalten: links die Aussage, rechts die Liste. Vorher stand die
+   Überschrift schmal links und rechts blieb die halbe Breite leer. */
+.service-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-	gap: 1px;
-	margin-top: 2.5rem;
-	background: var(--line);
-	border: 1px solid var(--line);
-	border-radius: var(--radius);
-	overflow: hidden;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+	gap: clamp(2rem, 6vw, 5rem);
+	align-items: center;
+}
+
+@media (max-width: 860px) {
+	.service-grid {
+		grid-template-columns: 1fr;
+		gap: 2.25rem;
+	}
+}
+
+.service-intro h2 {
+	font-size: var(--s-2xl);
+	max-width: 18ch;
+}
+
+.checks {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	border-top: 1px solid var(--line);
 }
 .check {
-	background: var(--paper);
-	padding: 1.75rem clamp(1.25rem, 3vw, 1.75rem);
 	display: flex;
-	flex-direction: column;
-	gap: .85rem;
+	align-items: center;
+	gap: 1.1rem;
+	padding: clamp(1.15rem, 2.4vw, 1.6rem) 0;
+	border-bottom: 1px solid var(--line);
 }
 .check .tick {
-	width: 26px;
-	height: 26px;
-	border: 1px solid var(--accent-deep);
-	border-radius: var(--radius);
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--accent) 22%, transparent);
 	display: grid;
 	place-items: center;
 	color: var(--accent-deep);
 	flex: none;
 }
-.check .tick svg { width: 13px; height: 13px; fill: currentColor; }
-.check p {
+.check .tick svg { width: 15px; height: 15px; fill: currentColor; }
+.check-text {
 	font-weight: 600;
-	font-size: var(--s-md);
-	line-height: 1.45;
+	font-size: var(--s-lg);
+	line-height: 1.35;
+	letter-spacing: -.01em;
 }
 
 /* --- Kundenmeinungen ----------------------------------------------------- */
@@ -483,6 +502,44 @@ button { font: inherit; color: inherit; }
 	border-top: 1px solid var(--line);
 }
 .review figcaption b { color: var(--text); font-weight: 600; }
+
+/* --- Fragen & Antworten -------------------------------------------------- */
+
+.faq {
+	margin-top: 2.25rem;
+	max-width: 78ch;
+	border-top: 1px solid var(--line);
+}
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.5rem;
+	padding: 1.25rem 0;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: var(--s-lg);
+	line-height: 1.4;
+	list-style: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:hover { color: var(--accent-deep); }
+.faq-mark {
+	width: 14px;
+	height: 14px;
+	flex: none;
+	fill: var(--accent-deep);
+	transition: transform .25s ease;
+}
+.faq-item[open] .faq-mark { transform: rotate(45deg); }
+.faq-answer {
+	padding-bottom: 1.35rem;
+	max-width: 68ch;
+}
+.faq-answer p { color: var(--muted); }
+.faq-answer p + p { margin-top: .75rem; }
+.faq-answer a { color: var(--accent-deep); }
 
 /* --- Karussell ----------------------------------------------------------- */
 

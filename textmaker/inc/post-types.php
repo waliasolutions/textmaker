@@ -45,6 +45,11 @@ function textmaker_post_type_config(): array {
 			'plural'   => __( 'Kundenmeinungen', 'textmaker' ),
 			'supports' => array( 'title', 'editor', 'page-attributes' ),
 		),
+		'tm_faq'         => array(
+			'singular' => __( 'Frage & Antwort', 'textmaker' ),
+			'plural'   => __( 'Fragen & Antworten', 'textmaker' ),
+			'supports' => array( 'title', 'editor', 'page-attributes' ),
+		),
 	);
 }
 
@@ -115,6 +120,12 @@ function textmaker_render_dashboard(): void {
 			'label' => __( 'Kundenmeinungen bearbeiten', 'textmaker' ),
 		),
 		array(
+			'title' => __( 'Fragen & Antworten', 'textmaker' ),
+			'desc'  => __( 'Kurze, klare Antworten auf häufige Fragen. Sie erscheinen auf der Startseite und werden zusätzlich maschinenlesbar ausgeliefert, damit Suchmaschinen und KI-Assistenten daraus zitieren können.', 'textmaker' ),
+			'url'   => admin_url( 'edit.php?post_type=tm_faq' ),
+			'label' => __( 'Fragen bearbeiten', 'textmaker' ),
+		),
+		array(
 			'title' => __( 'Anfragen', 'textmaker' ),
 			'desc'  => __( 'Alle über das Kontaktformular eingegangenen Offertanfragen samt Dokumenten.', 'textmaker' ),
 			'url'   => admin_url( 'edit.php?post_type=tm_submission' ),
@@ -151,7 +162,43 @@ function textmaker_render_dashboard(): void {
 		);
 	}
 
-	echo '</div></div>';
+	echo '</div>';
+
+	// Zustellung des Kontaktformulars prüfen.
+	$result = get_transient( 'textmaker_test_mail_result' );
+
+	if ( is_array( $result ) ) {
+		delete_transient( 'textmaker_test_mail_result' );
+		printf(
+			'<div class="notice notice-%1$s" style="margin-top:1.5rem;"><p>%2$s</p></div>',
+			esc_attr( (string) $result[0] ),
+			esc_html( (string) $result[1] )
+		);
+	}
+
+	$recipient = textmaker_notification_recipient();
+
+	echo '<hr style="margin:2rem 0 1.5rem;">';
+	printf( '<h2>%s</h2>', esc_html__( 'Zustellung des Kontaktformulars', 'textmaker' ) );
+
+	printf(
+		'<p style="max-width:60em;">%1$s <code>%2$s</code></p>',
+		esc_html__( 'Anfragen gehen an:', 'textmaker' ),
+		esc_html( array() !== $recipient ? implode( ', ', $recipient ) : __( 'keine gültige Adresse hinterlegt', 'textmaker' ) )
+	);
+
+	printf(
+		'<p class="description" style="max-width:60em;">%s</p>',
+		esc_html__( 'Der Versand läuft über wp_mail(). Ob eine Nachricht tatsächlich ankommt, entscheidet der Server: Viele Hoster verschicken ohne SPF- und DKIM-Signatur, solche Mails landen im Spam oder werden verworfen. Für verlässliche Zustellung ein SMTP-Plugin einrichten und dort die eigene Domain als Absender hinterlegen.', 'textmaker' )
+	);
+
+	echo '<form method="post">';
+	wp_nonce_field( 'textmaker_test_mail' );
+	echo '<input type="hidden" name="textmaker_test_mail" value="1">';
+	printf( '<button type="submit" class="button">%s</button>', esc_html__( 'Testmail senden', 'textmaker' ) );
+	echo '</form>';
+
+	echo '</div>';
 }
 
 /**

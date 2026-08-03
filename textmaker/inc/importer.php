@@ -51,6 +51,14 @@ function textmaker_import_manifest(): array {
 		'title' => 'teXtmaker Logo',
 	);
 
+	// Website-Symbol (Favicon). WordPress erwartet mindestens 512 px und
+	// erzeugt die kleineren Grössen selbst.
+	$items[] = array(
+		'group' => 'favicon',
+		'path'  => '/wp-content/uploads/2022/08/cropped-logo-textmaker-white-270x270.png',
+		'title' => 'teXtmaker Website-Symbol',
+	);
+
 	// Ablauf der Korrektur.
 	$steps = array(
 		array( '/wp-content/uploads/2023/03/slider-oben-1.png', 'Dein Text mit Fehlern' ),
@@ -369,6 +377,11 @@ function textmaker_run_media_import(): array {
 
 		if ( 'logo' === $item['group'] ) {
 			set_theme_mod( 'custom_logo', $attachment_id );
+			continue;
+		}
+
+		if ( 'favicon' === $item['group'] ) {
+			update_option( 'site_icon', $attachment_id );
 			continue;
 		}
 
