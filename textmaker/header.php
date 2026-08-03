@@ -28,16 +28,19 @@ defined( 'ABSPATH' ) || exit;
 			<a class="wordmark" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
 				<?php
 				$textmaker_name = get_bloginfo( 'name' );
-				$textmaker_pos  = mb_stripos( $textmaker_name, 'x' );
+
+				// Byte-basiert genügt: getrennt wird an einem ASCII-„x“, das in
+				// UTF-8 nie Teil einer Mehrbyte-Sequenz ist.
+				$textmaker_pos = stripos( $textmaker_name, 'x' );
 
 				if ( false === $textmaker_pos ) {
 					echo esc_html( $textmaker_name );
 				} else {
 					printf(
 						'%1$s<span class="x">%2$s</span>%3$s',
-						esc_html( mb_substr( $textmaker_name, 0, $textmaker_pos ) ),
-						esc_html( mb_substr( $textmaker_name, $textmaker_pos, 1 ) ),
-						esc_html( mb_substr( $textmaker_name, $textmaker_pos + 1 ) )
+						esc_html( substr( $textmaker_name, 0, $textmaker_pos ) ),
+						esc_html( substr( $textmaker_name, $textmaker_pos, 1 ) ),
+						esc_html( substr( $textmaker_name, $textmaker_pos + 1 ) )
 					);
 				}
 				?>

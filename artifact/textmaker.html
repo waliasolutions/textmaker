@@ -739,8 +739,8 @@ textarea { resize: vertical; min-height: 112px; }
 .ref-tile {
   aspect-ratio: 3 / 4;
   border-radius: var(--radius);
-  border: 1px solid var(--on-dark-line);
-  background: var(--ink-soft);
+  border: 1px solid var(--line);
+  background: var(--paper);
   padding: .9rem;
   display: flex;
   flex-direction: column;
@@ -748,21 +748,22 @@ textarea { resize: vertical; min-height: 112px; }
   gap: .35rem;
   transition: border-color .25s ease;
 }
-.ref:hover .ref-tile { border-color: rgba(241, 243, 241, .38); }
+.ref:hover .ref-tile { border-color: var(--accent-deep); }
 .ref-tile .pub {
   font-size: .625rem;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--on-dark-mute);
+  color: var(--accent-deep);
 }
 .ref-tile .headline {
   font-family: var(--f-doc);
   font-size: .9rem;
   line-height: 1.35;
-  color: var(--on-dark);
+  color: var(--text);
 }
-.ref-byline { font-size: var(--s-xs); color: var(--on-dark-mute); }
+.ref-byline { font-size: var(--s-xs); color: var(--muted); }
 
+/* Logo-Reihe auf hellem Grund — die Originalfarben bleiben lesbar. */
 .logos {
   display: flex;
   flex-wrap: wrap;
@@ -771,16 +772,16 @@ textarea { resize: vertical; min-height: 112px; }
   gap: clamp(1.5rem, 5vw, 3.5rem);
   margin-top: 3rem;
   padding-top: 2.5rem;
-  border-top: 1px solid var(--on-dark-line);
+  border-top: 1px solid var(--line);
 }
 .logo {
   font-weight: 600;
   letter-spacing: .02em;
   font-size: 1.05rem;
-  color: var(--on-dark-mute);
+  color: var(--muted);
   transition: color .25s ease;
 }
-.logo:hover { color: var(--on-dark); }
+.logo:hover { color: var(--text); }
 
 /* --- Lightbox ------------------------------------------------------------ */
 
@@ -1281,7 +1282,7 @@ textarea { resize: vertical; min-height: 112px; }
   </section>
 
   <!-- ================= Referenzen ================= -->
-  <section class="band band--ink" id="referenzen">
+  <section class="band band--shell" id="referenzen">
     <div class="frame">
       <div class="section-head" data-reveal>
         <h2>Referenzen unseres Teams im Bereich Text / Journalismus</h2>

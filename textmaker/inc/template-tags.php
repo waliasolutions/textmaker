@@ -227,7 +227,10 @@ function textmaker_initials( string $name ): string {
 	$initials = '';
 
 	foreach ( array_slice( $parts, 0, 2 ) as $part ) {
-		$initials .= mb_strtoupper( mb_substr( $part, 0, 1 ) );
+		$first = mb_substr( $part, 0, 1 );
+
+		// mb_strtoupper() wird von WordPress nicht ersetzt, falls mbstring fehlt.
+		$initials .= function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $first ) : strtoupper( $first );
 	}
 
 	return '' === $initials ? '·' : $initials;

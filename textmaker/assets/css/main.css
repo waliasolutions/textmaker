@@ -740,12 +740,12 @@ button { font: inherit; color: inherit; }
 .ref-tile {
 	display: block;
 	border-radius: var(--radius);
-	border: 1px solid var(--on-dark-line);
-	background: var(--ink-soft);
+	border: 1px solid var(--line);
+	background: var(--paper);
 	overflow: hidden;
 	transition: border-color .25s ease;
 }
-.ref:hover .ref-tile { border-color: rgba(241, 243, 241, .38); }
+.ref:hover .ref-tile { border-color: var(--accent-deep); }
 .ref-tile img {
 	width: 100%;
 	aspect-ratio: 3 / 4;
@@ -756,15 +756,17 @@ button { font: inherit; color: inherit; }
 	font-size: .625rem;
 	letter-spacing: .14em;
 	text-transform: uppercase;
-	color: var(--accent);
+	color: var(--accent-deep);
 }
 .ref-meta .headline {
 	font-size: var(--s-sm);
 	line-height: 1.35;
-	color: var(--on-dark);
+	color: var(--text);
 }
-.ref-byline { font-size: var(--s-xs); color: var(--on-dark-mute); }
+.ref-byline { font-size: var(--s-xs); color: var(--muted); }
 
+/* Logo-Reihe: heller Grund, damit die Logos in ihren Originalfarben lesbar
+   bleiben — deshalb hier bewusst kein Filter. */
 .logos {
 	display: flex;
 	flex-wrap: wrap;
@@ -773,25 +775,24 @@ button { font: inherit; color: inherit; }
 	gap: clamp(1.5rem, 5vw, 3.5rem);
 	margin-top: 3rem;
 	padding-top: 2.5rem;
-	border-top: 1px solid var(--on-dark-line);
+	border-top: 1px solid var(--line);
 }
 .logo {
 	display: inline-flex;
 	align-items: center;
 	text-decoration: none;
-	opacity: .78;
+	opacity: .85;
 	transition: opacity .25s ease;
 }
 .logo:hover { opacity: 1; }
 .logo .logo-img {
-	max-height: 44px;
+	max-height: 48px;
 	width: auto;
-	filter: grayscale(1) brightness(2.4);
 }
 .logo .logo-text {
 	font-weight: 600;
 	font-size: 1.05rem;
-	color: var(--on-dark-mute);
+	color: var(--muted);
 }
 
 /* --- Lightbox ------------------------------------------------------------ */

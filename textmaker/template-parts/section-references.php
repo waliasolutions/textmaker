@@ -17,7 +17,7 @@ if ( array() === $textmaker_refs && array() === $textmaker_logos ) {
 $textmaker_count = count( $textmaker_refs );
 ?>
 
-<section class="band band--ink" id="referenzen">
+<section class="band band--shell" id="referenzen">
 	<div class="frame">
 		<div class="section-head" data-reveal>
 			<h2><?php echo esc_html( textmaker_option( 'refs_heading' ) ); ?></h2>

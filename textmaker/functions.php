@@ -24,6 +24,7 @@ define( 'TEXTMAKER_SOURCE_DOMAIN', 'https://www.textmaker.ch' );
 
 require_once TEXTMAKER_DIR . '/inc/setup.php';
 require_once TEXTMAKER_DIR . '/inc/post-types.php';
+require_once TEXTMAKER_DIR . '/inc/activation.php';
 require_once TEXTMAKER_DIR . '/inc/customizer.php';
 require_once TEXTMAKER_DIR . '/inc/template-tags.php';
 require_once TEXTMAKER_DIR . '/inc/gtm.php';
