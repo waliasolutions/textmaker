@@ -1,0 +1,17 @@
+/*
+Theme Name:  teXtmaker
+Theme URI:   https://www.textmaker.ch/
+Author:      Walia Solutions
+Description: Massgeschneidertes, abhängigkeitsfreies Theme für teXtmaker.ch. Ersetzt den Elementor-Stack durch native WordPress-Bausteine: Kundenmeinungen, Ablauf-Galerie, Referenz-Karussell und ein natives Kontaktformular mit Datei-Upload. Enthält einen Medien-Importer, der die Bilder aus der Live-Domain übernimmt, sowie eine Google-Tag-Manager-Integration. Kompatibel mit PHP 8.5.
+Version:     1.0.0
+Requires at least: 6.4
+Tested up to: 7.0
+Requires PHP: 8.1
+License:     GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: textmaker
+Tags:        one-column, custom-colors, custom-logo, custom-menu, editor-style, featured-images, translation-ready, accessibility-ready
+
+Die eigentlichen Styles liegen in assets/css/main.css. Diese Datei enthält nur
+den Theme-Header, damit WordPress das Theme erkennt.
+*/
