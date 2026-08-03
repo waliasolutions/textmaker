@@ -18,6 +18,16 @@ const TEXTMAKER_IMPORT_BATCH = 6;
 const TEXTMAKER_IMPORT_MAP   = 'textmaker_imported_media';
 
 /**
+ * Stylesheet der alten Startseite und Kennung des Hero-Abschnitts.
+ *
+ * Das Hintergrundbild des Heros steht nicht im Seiten-HTML, sondern im vom
+ * Page-Builder erzeugten Stylesheet. Von dort wird es ausgelesen.
+ */
+const TEXTMAKER_HERO_CSS     = '/wp-content/uploads/elementor/css/post-157.css';
+const TEXTMAKER_HERO_ELEMENT = 'elementor-element-7afdeda7';
+const TEXTMAKER_HERO_KEY     = 'hero-background';
+
+/**
  * Quelldomain des Imports.
  */
 function textmaker_source_domain(): string {
@@ -193,10 +203,13 @@ function textmaker_render_import_page(): void {
 		}
 	}
 
-	$manifest  = textmaker_import_manifest();
-	$map       = textmaker_import_map();
-	$total     = count( $manifest );
-	$done      = count( array_filter( $manifest, static fn( array $item ): bool => isset( $map[ $item['path'] ] ) ) );
+	$manifest = textmaker_import_manifest();
+	$map      = textmaker_import_map();
+
+	// Der Hero-Hintergrund zählt mit, steht aber nicht im Manifest.
+	$total     = count( $manifest ) + 1;
+	$done      = count( array_filter( $manifest, static fn( array $item ): bool => isset( $map[ $item['path'] ] ) ) )
+		+ ( isset( $map[ TEXTMAKER_HERO_KEY ] ) ? 1 : 0 );
 	$remaining = $total - $done;
 
 	echo '<div class="wrap">';
@@ -214,7 +227,7 @@ function textmaker_render_import_page(): void {
 		'<p style="max-width:60em;">%s</p>',
 		sprintf(
 			/* translators: %s: Quelldomain. */
-			esc_html__( 'Der Import holt Logo, Team-Porträts, Ablauf-Screenshots, Referenzen und Referenz-Logos von %s in die Mediathek und legt die passenden Einträge an. Bereits übernommene Dateien werden übersprungen — du kannst den Import also jederzeit erneut starten.', 'textmaker' ),
+			esc_html__( 'Der Import holt Logo, Hero-Hintergrund, Team-Porträts, Ablauf-Screenshots, Referenzen und Referenz-Logos von %s in die Mediathek und legt die passenden Einträge an. Bereits übernommene Dateien werden übersprungen — du kannst den Import also jederzeit erneut starten.', 'textmaker' ),
 			esc_html( textmaker_source_domain() )
 		)
 	);
@@ -305,6 +318,27 @@ function textmaker_run_media_import(): array {
 	$imported = 0;
 	$failed   = 0;
 
+	// Hero-Hintergrund zuerst — er steckt im Stylesheet, nicht im Manifest.
+	if ( ! isset( $map[ TEXTMAKER_HERO_KEY ] ) ) {
+		$hero = textmaker_import_hero_background();
+
+		if ( is_wp_error( $hero ) ) {
+			++$failed;
+			$notices[] = array(
+				'warning',
+				sprintf(
+					/* translators: %s: Fehlermeldung. */
+					__( 'Das Hintergrundbild des Heros konnte nicht ermittelt werden: %s Du kannst es im Customizer unter „Hero“ von Hand setzen.', 'textmaker' ),
+					$hero->get_error_message()
+				),
+			);
+		} else {
+			$map[ TEXTMAKER_HERO_KEY ] = $hero;
+			++$imported;
+			$notices[] = array( 'success', __( 'Hintergrundbild des Heros übernommen.', 'textmaker' ) );
+		}
+	}
+
 	foreach ( textmaker_import_manifest() as $item ) {
 		if ( $imported >= TEXTMAKER_IMPORT_BATCH ) {
 			break;
@@ -359,6 +393,100 @@ function textmaker_run_media_import(): array {
 	}
 
 	return $notices;
+}
+
+/**
+ * Hintergrundbild des Heros aus dem Stylesheet der Live-Seite holen.
+ *
+ * @return int|WP_Error Anhang-ID oder Fehler.
+ */
+function textmaker_import_hero_background(): int|WP_Error {
+	$url = textmaker_discover_hero_background();
+
+	if ( is_wp_error( $url ) ) {
+		return $url;
+	}
+
+	$attachment_id = textmaker_sideload_remote( $url, __( 'Hero-Hintergrund', 'textmaker' ) );
+
+	if ( is_wp_error( $attachment_id ) ) {
+		return $attachment_id;
+	}
+
+	set_theme_mod( 'textmaker_hero_image', $attachment_id );
+
+	return $attachment_id;
+}
+
+/**
+ * URL des Hero-Hintergrunds im erzeugten Stylesheet suchen.
+ *
+ * Zuerst wird gezielt die Regel des Hero-Abschnitts gelesen. Wurde die Seite
+ * inzwischen umgebaut, greift als Rückfall das erste Hintergrundbild im
+ * Stylesheet, das aus dem Upload-Verzeichnis stammt.
+ *
+ * @return string|WP_Error Vollständige Bild-URL oder Fehler.
+ */
+function textmaker_discover_hero_background(): string|WP_Error {
+	$response = wp_remote_get(
+		textmaker_source_domain() . TEXTMAKER_HERO_CSS,
+		array(
+			'timeout'    => 30,
+			'user-agent' => 'teXtmaker-Theme-Import/1.0',
+		)
+	);
+
+	if ( is_wp_error( $response ) ) {
+		return $response;
+	}
+
+	$code = wp_remote_retrieve_response_code( $response );
+
+	if ( 200 !== $code ) {
+		/* translators: %d: HTTP-Statuscode. */
+		return new WP_Error( 'textmaker_http', sprintf( __( 'Das Stylesheet antwortete mit Status %d.', 'textmaker' ), $code ) );
+	}
+
+	$css = wp_remote_retrieve_body( $response );
+
+	if ( '' === $css ) {
+		return new WP_Error( 'textmaker_empty', __( 'Das Stylesheet war leer.', 'textmaker' ) );
+	}
+
+	// Regelblock des Hero-Abschnitts isolieren.
+	$position = strpos( $css, TEXTMAKER_HERO_ELEMENT );
+
+	if ( false !== $position ) {
+		$block = substr( $css, $position, 2000 );
+
+		if ( 1 === preg_match( '/background-image\s*:\s*url\(\s*["\']?([^"\')]+)/i', $block, $matches ) ) {
+			return textmaker_absolute_url( trim( $matches[1] ) );
+		}
+	}
+
+	// Rückfall: erstes Hintergrundbild aus dem Upload-Verzeichnis.
+	if ( 1 === preg_match( '#background-image\s*:\s*url\(\s*["\']?([^"\')]*wp-content/uploads/[^"\')]+)#i', $css, $matches ) ) {
+		return textmaker_absolute_url( trim( $matches[1] ) );
+	}
+
+	return new WP_Error( 'textmaker_not_found', __( 'Im Stylesheet wurde kein Hintergrundbild gefunden.', 'textmaker' ) );
+}
+
+/**
+ * Relative oder protokollrelative URL auf die Quelldomain beziehen.
+ *
+ * @param string $url Rohe URL aus dem Stylesheet.
+ */
+function textmaker_absolute_url( string $url ): string {
+	if ( str_starts_with( $url, '//' ) ) {
+		return 'https:' . $url;
+	}
+
+	if ( str_starts_with( $url, 'http' ) ) {
+		return $url;
+	}
+
+	return textmaker_source_domain() . '/' . ltrim( $url, '/' );
 }
 
 /**
@@ -442,7 +570,19 @@ function textmaker_create_entry( array $item, int $attachment_id ): void {
 }
 
 /**
- * Texte der rechtlichen Seiten aus der Live-Domain übernehmen.
+ * Texte der rechtlichen Seiten übernehmen.
+ *
+ * Diese Seiten wirken leer, weil ihr Text nicht in `post_content` steht,
+ * sondern in den Daten des alten Page-Builders. Sobald dieser abgeschaltet
+ * ist, rendert WordPress folglich nichts.
+ *
+ * Die Quelle wird darum in dieser Reihenfolge gesucht:
+ *   1. die Builder-Daten der Seite in dieser Datenbank,
+ *   2. der Fliesstext der Seite auf der Live-Domain.
+ *
+ * Schritt 1 ist der zuverlässige Weg, wenn das Theme auf derselben Website
+ * läuft — dort liefert Schritt 2 nichts mehr, weil die Live-Seite bereits mit
+ * diesem Theme ausgeliefert wird.
  *
  * @return array<int, array{0: string, 1: string}> Meldungen für die Ausgabe.
  */
@@ -456,23 +596,9 @@ function textmaker_import_legal_pages(): array {
 	$notices = array();
 
 	foreach ( $pages as $slug => $title ) {
-		$content = textmaker_fetch_page_content( textmaker_source_domain() . '/' . $slug . '/' );
+		$page = textmaker_find_page( $slug, $title );
 
-		if ( is_wp_error( $content ) ) {
-			$notices[] = array(
-				'error',
-				sprintf(
-					/* translators: 1: Seitentitel, 2: Fehlermeldung. */
-					__( '%1$s: %2$s', 'textmaker' ),
-					$title,
-					$content->get_error_message()
-				),
-			);
-			continue;
-		}
-
-		$page = get_page_by_path( $slug );
-
+		// Bereits vorhandener, echter Inhalt bleibt unangetastet.
 		if ( $page instanceof WP_Post && '' !== trim( wp_strip_all_tags( $page->post_content ) ) ) {
 			$notices[] = array(
 				'info',
@@ -483,6 +609,37 @@ function textmaker_import_legal_pages(): array {
 				),
 			);
 			continue;
+		}
+
+		$content = '';
+		$source  = '';
+
+		if ( $page instanceof WP_Post ) {
+			$content = textmaker_extract_builder_content( (int) $page->ID );
+
+			if ( '' !== $content ) {
+				$source = __( 'aus den Daten des alten Page-Builders', 'textmaker' );
+			}
+		}
+
+		if ( '' === $content ) {
+			$remote = textmaker_fetch_page_content( textmaker_source_domain() . '/' . $slug . '/' );
+
+			if ( is_wp_error( $remote ) ) {
+				$notices[] = array(
+					'error',
+					sprintf(
+						/* translators: 1: Seitentitel, 2: Fehlermeldung. */
+						__( '%1$s konnte nicht übernommen werden. In dieser Datenbank sind keine Builder-Daten hinterlegt, und der Abruf der Live-Seite scheiterte: %2$s', 'textmaker' ),
+						$title,
+						$remote->get_error_message()
+					),
+				);
+				continue;
+			}
+
+			$content = $remote;
+			$source  = __( 'von der Live-Domain', 'textmaker' );
 		}
 
 		$data = array(
@@ -499,12 +656,139 @@ function textmaker_import_legal_pages(): array {
 
 		$result = wp_insert_post( $data, true );
 
-		$notices[] = is_wp_error( $result )
-			? array( 'error', sprintf( /* translators: %s: Seitentitel. */ __( '%s konnte nicht gespeichert werden.', 'textmaker' ), $title ) )
-			: array( 'success', sprintf( /* translators: %s: Seitentitel. */ __( '%s wurde übernommen.', 'textmaker' ), $title ) );
+		if ( is_wp_error( $result ) ) {
+			$notices[] = array(
+				'error',
+				sprintf( /* translators: %s: Seitentitel. */ __( '%s konnte nicht gespeichert werden.', 'textmaker' ), $title ),
+			);
+			continue;
+		}
+
+		textmaker_detach_builder( (int) $result );
+
+		$notices[] = array(
+			'success',
+			sprintf(
+				/* translators: 1: Seitentitel, 2: Herkunft des Inhalts. */
+				__( '%1$s wurde übernommen (%2$s).', 'textmaker' ),
+				$title,
+				$source
+			),
+		);
 	}
 
 	return $notices;
+}
+
+/**
+ * Seite über Pfad oder Titel finden.
+ *
+ * @param string $slug  Pfad der Seite.
+ * @param string $title Titel als Rückfall.
+ */
+function textmaker_find_page( string $slug, string $title ): ?WP_Post {
+	$page = get_page_by_path( $slug );
+
+	if ( $page instanceof WP_Post ) {
+		return $page;
+	}
+
+	$found = get_posts(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => 'any',
+			'title'          => $title,
+			'posts_per_page' => 1,
+		)
+	);
+
+	return $found[0] ?? null;
+}
+
+/**
+ * Fliesstext aus den Daten des alten Page-Builders lesen.
+ *
+ * Der Builder legt seinen Aufbau als JSON-Baum in einem Meta-Feld ab. Gesucht
+ * werden die Text- und Überschriften-Widgets, in der Reihenfolge des Baums.
+ *
+ * @param int $post_id Beitrags-ID.
+ * @return string HTML oder leerer String, wenn nichts gefunden wurde.
+ */
+function textmaker_extract_builder_content( int $post_id ): string {
+	$raw = get_post_meta( $post_id, '_elementor_data', true );
+
+	if ( ! is_string( $raw ) || '' === trim( $raw ) ) {
+		return '';
+	}
+
+	$tree = json_decode( $raw, true );
+
+	// Manche Installationen legen den Wert maskiert ab.
+	if ( ! is_array( $tree ) ) {
+		$tree = json_decode( wp_unslash( $raw ), true );
+	}
+
+	if ( ! is_array( $tree ) ) {
+		return '';
+	}
+
+	$parts = array();
+	textmaker_walk_builder_tree( $tree, $parts );
+
+	if ( array() === $parts ) {
+		return '';
+	}
+
+	return wp_kses_post( implode( "\n\n", $parts ) );
+}
+
+/**
+ * Baum des Page-Builders rekursiv nach Textinhalten durchgehen.
+ *
+ * @param array<int|string, mixed> $nodes Knoten des Baums.
+ * @param array<int, string>       $parts Sammelbehälter, wird ergänzt.
+ */
+function textmaker_walk_builder_tree( array $nodes, array &$parts ): void {
+	foreach ( $nodes as $node ) {
+		if ( ! is_array( $node ) ) {
+			continue;
+		}
+
+		$type     = isset( $node['widgetType'] ) ? (string) $node['widgetType'] : '';
+		$settings = isset( $node['settings'] ) && is_array( $node['settings'] ) ? $node['settings'] : array();
+
+		if ( 'text-editor' === $type && isset( $settings['editor'] ) ) {
+			$editor = trim( (string) $settings['editor'] );
+
+			if ( '' !== $editor ) {
+				$parts[] = $editor;
+			}
+		}
+
+		if ( 'heading' === $type && isset( $settings['title'] ) ) {
+			$heading = trim( wp_strip_all_tags( (string) $settings['title'] ) );
+
+			if ( '' !== $heading ) {
+				$tag     = isset( $settings['header_size'] ) ? sanitize_key( (string) $settings['header_size'] ) : 'h2';
+				$tag     = in_array( $tag, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ? $tag : 'h2';
+				$parts[] = '<' . $tag . '>' . esc_html( $heading ) . '</' . $tag . '>';
+			}
+		}
+
+		if ( isset( $node['elements'] ) && is_array( $node['elements'] ) ) {
+			textmaker_walk_builder_tree( $node['elements'], $parts );
+		}
+	}
+}
+
+/**
+ * Seite vom alten Page-Builder lösen, damit WordPress den Inhalt selbst rendert.
+ *
+ * @param int $post_id Beitrags-ID.
+ */
+function textmaker_detach_builder( int $post_id ): void {
+	delete_post_meta( $post_id, '_elementor_edit_mode' );
+	delete_post_meta( $post_id, '_wp_page_template' );
 }
 
 /**

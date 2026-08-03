@@ -292,6 +292,53 @@ function textmaker_customize_register( WP_Customize_Manager $wp_customize ): voi
 		}
 	}
 
+	// Hintergrundbild des Heros.
+	$wp_customize->add_setting(
+		'textmaker_hero_image',
+		array(
+			'default'           => 0,
+			'sanitize_callback' => 'absint',
+			'transport'         => 'refresh',
+		)
+	);
+
+	$wp_customize->add_control(
+		new WP_Customize_Media_Control(
+			$wp_customize,
+			'textmaker_hero_image',
+			array(
+				'label'       => __( 'Hintergrundbild', 'textmaker' ),
+				'description' => __( 'Wird über die volle Breite des Startbilds gelegt. Der Import holt es automatisch aus der Live-Domain.', 'textmaker' ),
+				'section'     => 'textmaker_section_hero',
+				'mime_type'   => 'image',
+			)
+		)
+	);
+
+	$wp_customize->add_setting(
+		'textmaker_hero_overlay',
+		array(
+			'default'           => 55,
+			'sanitize_callback' => static fn( $value ): int => max( 0, min( 90, absint( $value ) ) ),
+			'transport'         => 'refresh',
+		)
+	);
+
+	$wp_customize->add_control(
+		'textmaker_hero_overlay',
+		array(
+			'label'       => __( 'Abdunklung des Hintergrundbilds (%)', 'textmaker' ),
+			'description' => __( 'Je höher der Wert, desto besser lesbar die Überschrift.', 'textmaker' ),
+			'section'     => 'textmaker_section_hero',
+			'type'        => 'number',
+			'input_attrs' => array(
+				'min'  => 0,
+				'max'  => 90,
+				'step' => 5,
+			),
+		)
+	);
+
 	// Sichtbarkeit der Abschnitte.
 	$wp_customize->add_section(
 		'textmaker_section_visibility',

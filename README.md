@@ -32,6 +32,7 @@ aktiv sind, entfernt das Theme ihre Frontend-Assets von der Startseite.
 **teXtmaker → Bilder importieren** holt in Etappen von `https://www.textmaker.ch`:
 
 - das Logo (wird direkt als Website-Logo gesetzt),
+- das Hintergrundbild des Heros,
 - die 7 Ablauf-Screenshots samt Bildunterschriften,
 - die 6 Team-Porträts samt Funktion,
 - die 22 Referenzen samt Publikation und Autorenzeile,
@@ -41,9 +42,27 @@ Zu jedem Bild wird der passende Eintrag angelegt. Bereits geholte Dateien werden
 der Import ist beliebig oft wiederholbar. Über *Historie zurücksetzen* lässt sich das Gedächtnis
 leeren, falls Dateien neu geladen werden sollen.
 
-Auf derselben Seite übernimmt **Rechtliche Seiten** die Texte von AGB, Datenschutz und Impressum
-aus der Live-Domain in gleichnamige WordPress-Seiten. Seiten, die bereits Inhalt haben, werden
-nicht überschrieben.
+Das **Hero-Hintergrundbild** steht nicht im Seiten-HTML, sondern im Stylesheet, das der alte
+Page-Builder erzeugt hat. Der Import liest es von dort aus und setzt es als Hintergrund. Klappt
+das nicht — etwa weil die Seite inzwischen umgebaut wurde —, lässt es sich im Customizer unter
+*Hero* von Hand wählen; dort steuert auch ein Regler die Abdunklung.
+
+### Rechtliche Seiten
+
+**Rechtliche Seiten übernehmen** füllt AGB, Datenschutz und Impressum. Diese Seiten wirken leer,
+weil ihr Text nie in `post_content` stand, sondern in den Daten des alten Page-Builders — ist der
+abgeschaltet, rendert WordPress nichts.
+
+Der Import sucht darum in dieser Reihenfolge:
+
+1. **Builder-Daten in dieser Datenbank** — der Text wird direkt aus dem gespeicherten JSON-Baum
+   der Seite gelesen. Das ist der zuverlässige Weg, wenn das Theme auf derselben Website läuft.
+2. **Live-Domain** — nur als Rückfall. Läuft das Theme bereits auf textmaker.ch, liefert dieser
+   Weg nichts mehr, weil die Live-Seite dann schon mit diesem Theme ausgeliefert wird.
+
+Übernommene Seiten werden vom Page-Builder gelöst (`_elementor_edit_mode` und das
+Builder-Seitentemplate werden entfernt), damit WordPress den Inhalt selbst rendert. Seiten, die
+bereits echten Inhalt in `post_content` haben, bleiben unangetastet.
 
 Zeigt die Quelldomain woanders hin (Staging, alte Domain), lässt sie sich per Filter umbiegen:
 
@@ -72,8 +91,8 @@ kleinere Zahlen erscheinen zuerst.
 
 ### Customizer-Bereiche
 
-- **Hero** — Überschrift, unterstrichene Wörter (kommagetrennt), Stempel-Text und die vier
-  Buttons im Format `Beschriftung|Ziel`.
+- **Hero** — Überschrift, unterstrichene Wörter (kommagetrennt), Stempel-Text, die vier
+  Buttons im Format `Beschriftung|Ziel`, Hintergrundbild und dessen Abdunklung.
 - **Lektorat-Service** — Überschrift und die Punkte (einer pro Zeile).
 - **Kundenmeinungen** — Überschrift und Elfsight-App-ID.
 - **Ablauf der Korrektur** — Überschrift und Einleitung.
@@ -186,6 +205,16 @@ Elfsight-Widget, und nur wenn eine App-ID gesetzt ist.
 **Barrierefreiheit.** Sichtbarer Fokus, Skip-Link, `aria-expanded` am Menü, Lightbox als
 `role="dialog"` mit Escape- und Pfeiltasten-Bedienung, Fokus kehrt nach dem Schliessen zurück.
 `prefers-reduced-motion` schaltet Stempel-Animation, Reveal und weiches Scrollen ab.
+
+**Sprung-Links.** Menüeinträge wie `#preise` zeigen auf Abschnitte, die es nur auf der Startseite
+gibt. Auf Unterseiten stellt das Theme ihnen automatisch die Startseite voran, sonst führen sie
+ins Leere. Gescrollt wird weich, mit Abstand zur klebenden Kopfzeile (`scroll-padding-top`).
+
+**Layout.** Der Body ist eine Spalte über die volle Höhe — sonst steht die Fusszeile auf kurzen
+Seiten wie dem Impressum mitten im Bild. Die klebende Kopfzeile rastet unter der
+WordPress-Werkzeugleiste ein. Für das horizontale Beschneiden wird `overflow-x: clip` statt
+`hidden` verwendet, weil `hidden` den Body zum Scroll-Container macht und `position: sticky`
+seinen Bezug zum Viewport nimmt.
 
 **Dunkelmodus.** Die Design-Referenz in `artifact/` folgt dem Systemthema. Das Theme selbst
 bleibt bewusst beim hellen Erscheinungsbild der Marke.

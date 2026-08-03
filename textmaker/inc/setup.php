@@ -122,6 +122,36 @@ function textmaker_assets(): void {
 add_action( 'wp_enqueue_scripts', 'textmaker_assets' );
 
 /**
+ * Hintergrundbild des Heros vorladen.
+ *
+ * Es ist das grösste sichtbare Element beim Seitenaufbau. Da es per CSS-Variable
+ * gesetzt wird, findet der Browser es sonst erst spät.
+ */
+function textmaker_preload_hero_image(): void {
+	if ( ! is_front_page() ) {
+		return;
+	}
+
+	$attachment_id = (int) get_theme_mod( 'textmaker_hero_image', 0 );
+
+	if ( 0 === $attachment_id ) {
+		return;
+	}
+
+	$url = wp_get_attachment_image_url( $attachment_id, 'full' );
+
+	if ( ! is_string( $url ) || '' === $url ) {
+		return;
+	}
+
+	printf(
+		'<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n",
+		esc_url( $url )
+	);
+}
+add_action( 'wp_head', 'textmaker_preload_hero_image', 2 );
+
+/**
  * Farbtokens aus dem Customizer als Inline-CSS.
  */
 function textmaker_palette_css(): string {
@@ -184,22 +214,68 @@ function textmaker_body_class( array $classes ): array {
 add_filter( 'body_class', 'textmaker_body_class' );
 
 /**
- * Elementor- und WooCommerce-Altlasten aus dem Frontend halten.
+ * Elementor-Altlasten aus dem Frontend halten.
  *
- * Das Theme kommt ohne Page-Builder aus; falls die Plugins noch aktiv sind,
- * werden ihre Frontend-Assets auf der Startseite nicht mehr benötigt.
+ * Das Theme kommt ohne Page-Builder aus. Solange die Plugins noch aktiv sind,
+ * bringen sie Abstände und Rahmen mit, die sich mit den Theme-Styles beissen —
+ * darum auf allen Seiten entfernen, nicht nur auf der Startseite.
  */
 function textmaker_dequeue_legacy(): void {
-	if ( ! is_front_page() ) {
-		return;
-	}
+	$handles = array(
+		'elementor-frontend',
+		'elementor-pro-frontend',
+		'elementor-post-157',
+		'elementor-icons',
+		'e-swiper',
+		'swiper',
+		'e-sticky',
+		'hello-elementor',
+		'hello-elementor-theme-style',
+		'hello-elementor-header-footer',
+	);
 
-	foreach ( array( 'elementor-frontend', 'elementor-post-157', 'elementor-pro-frontend', 'e-swiper', 'swiper' ) as $handle ) {
+	foreach ( $handles as $handle ) {
 		wp_dequeue_style( $handle );
 		wp_dequeue_script( $handle );
 	}
 }
 add_action( 'wp_enqueue_scripts', 'textmaker_dequeue_legacy', 100 );
+
+/**
+ * Sprung-Links auf die Startseite umbiegen.
+ *
+ * Menüeinträge wie „#preise“ zeigen auf Abschnitte, die es nur auf der
+ * Startseite gibt. Auf einer Unterseite führen sie ins Leere. Deshalb wird
+ * ihnen dort die Startseite vorangestellt.
+ *
+ * @param string $url URL des Menüeintrags.
+ */
+function textmaker_absolute_anchor( string $url ): string {
+	if ( ! str_starts_with( $url, '#' ) ) {
+		return $url;
+	}
+
+	if ( is_front_page() ) {
+		return $url;
+	}
+
+	return home_url( '/' ) . $url;
+}
+
+/**
+ * Menü-Links korrigieren.
+ *
+ * @param array<string, string> $atts Attribute des Links.
+ * @return array<string, string>
+ */
+function textmaker_nav_link_attributes( array $atts ): array {
+	if ( isset( $atts['href'] ) ) {
+		$atts['href'] = textmaker_absolute_anchor( (string) $atts['href'] );
+	}
+
+	return $atts;
+}
+add_filter( 'nav_menu_link_attributes', 'textmaker_nav_link_attributes' );
 
 /**
  * Emoji-Skript entfernen — spart einen Request, ohne Funktionsverlust.

@@ -8,9 +8,25 @@
 defined( 'ABSPATH' ) || exit;
 
 $textmaker_guarantee = trim( textmaker_option( 'hero_guarantee' ) );
+
+$textmaker_hero_id  = (int) get_theme_mod( 'textmaker_hero_image', 0 );
+$textmaker_hero_url = $textmaker_hero_id > 0
+	? (string) wp_get_attachment_image_url( $textmaker_hero_id, 'full' )
+	: '';
+$textmaker_overlay  = (int) get_theme_mod( 'textmaker_hero_overlay', 55 );
+
+$textmaker_hero_style = '' !== $textmaker_hero_url
+	? sprintf(
+		'--hero-bg:url(%1$s);--hero-overlay:%2$s;',
+		esc_url( $textmaker_hero_url ),
+		esc_attr( (string) ( $textmaker_overlay / 100 ) )
+	)
+	: '';
+
 ?>
 
-<section class="hero" id="top">
+<section class="hero<?php echo '' !== $textmaker_hero_url ? ' hero--image' : ''; ?>" id="top"
+	<?php echo '' !== $textmaker_hero_style ? 'style="' . esc_attr( $textmaker_hero_style ) . '"' : ''; ?>>
 	<div class="frame">
 		<h1><?php echo wp_kses( textmaker_hero_heading_html(), array( 'u' => array() ) ); ?></h1>
 

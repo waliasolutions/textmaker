@@ -69,17 +69,17 @@ defined( 'ABSPATH' ) || exit;
 				echo '<ul class="nav" id="hauptmenue">';
 
 				$textmaker_fallback = array(
-					home_url( '/' )     => __( 'Home', 'textmaker' ),
-					'#lektorat'         => __( 'Lektorat-Service', 'textmaker' ),
-					'#preise'           => __( 'Preise', 'textmaker' ),
-					'#referenzen'       => __( 'Referenzen', 'textmaker' ),
-					'#anfragen'         => __( 'Offerte anfragen', 'textmaker' ),
+					home_url( '/' ) => __( 'Home', 'textmaker' ),
+					'#lektorat'     => __( 'Lektorat-Service', 'textmaker' ),
+					'#preise'       => __( 'Preise', 'textmaker' ),
+					'#referenzen'   => __( 'Referenzen', 'textmaker' ),
+					'#anfragen'     => __( 'Offerte anfragen', 'textmaker' ),
 				);
 
 				foreach ( $textmaker_fallback as $textmaker_url => $textmaker_label ) {
 					printf(
 						'<li><a href="%1$s">%2$s</a></li>',
-						esc_url( $textmaker_url ),
+						esc_url( textmaker_absolute_anchor( (string) $textmaker_url ) ),
 						esc_html( $textmaker_label )
 					);
 				}

@@ -44,15 +44,42 @@
 *::before,
 *::after { box-sizing: border-box; }
 
+html {
+	margin: 0;
+	padding: 0;
+	/* Sprungziele nicht unter der klebenden Kopfzeile ausrichten. */
+	scroll-padding-top: 84px;
+	scroll-behavior: smooth;
+}
+
+/* Spalte über die volle Höhe: sonst steht die Fusszeile auf kurzen Seiten
+   mitten im Bild und darunter bleibt Weissraum. */
 body {
 	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 	background: var(--paper);
 	color: var(--text);
 	font-family: var(--f-sans);
 	font-size: var(--s-md);
 	line-height: 1.7;
 	-webkit-font-smoothing: antialiased;
-	overflow-x: hidden;
+	/* clip statt hidden: hidden macht den Body zum Scroll-Container und
+	   nimmt der klebenden Kopfzeile ihren Bezug zum Viewport. */
+	overflow-x: clip;
+}
+
+body > main { flex: 1 0 auto; }
+body > .site-foot { flex: none; }
+
+/* Die WordPress-Werkzeugleiste schiebt die Seite nach unten — die klebende
+   Kopfzeile muss darunter einrasten, sonst verschwindet sie dahinter. */
+body.admin-bar .site-head { top: 32px; }
+
+@media screen and (max-width: 782px) {
+	body.admin-bar .site-head { top: 46px; }
 }
 
 h1, h2, h3 {
@@ -264,6 +291,7 @@ button { font: inherit; color: inherit; }
 	padding-block: clamp(3.5rem, 10vh, 6rem) 5rem;
 	overflow: hidden;
 }
+/* Ohne Hintergrundbild: leise Aufhellung, damit die Fläche nicht flach wirkt. */
 .hero::before {
 	content: "";
 	position: absolute;
@@ -273,6 +301,23 @@ button { font: inherit; color: inherit; }
 		linear-gradient(to bottom, rgba(20, 24, 26, 0), rgba(20, 24, 26, .55));
 	pointer-events: none;
 }
+
+/* Mit Hintergrundbild: das Bild als Grund, darüber eine Abdunklung, deren
+   Stärke aus dem Customizer kommt (--hero-overlay). */
+.hero--image {
+	background-image: var(--hero-bg);
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.hero--image::before {
+	background: linear-gradient(
+		to bottom,
+		rgba(20, 24, 26, calc(var(--hero-overlay, .55) * .75)),
+		rgba(20, 24, 26, var(--hero-overlay, .55))
+	);
+}
+
 .hero .frame { position: relative; }
 
 .hero h1 {
@@ -1040,4 +1085,5 @@ button { font: inherit; color: inherit; }
 
 	[data-reveal] { opacity: 1; }
 	.is-ready .hero .guarantee { animation: none; }
+	html { scroll-behavior: auto; }
 }
