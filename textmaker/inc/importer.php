@@ -305,7 +305,7 @@ function textmaker_render_import_page(): void {
 	);
 	printf(
 		'<p class="notice notice-warning" style="padding:.75rem 1rem;max-width:60em;">%s</p>',
-		esc_html__( 'Achtung: Die Vorlagen ersetzen den bisherigen Inhalt beider Seiten. Sie enthalten Stellen in eckigen Klammern, die vor der Veröffentlichung zu füllen sind — Hosting-Anbieter, Serverstandort, Rechtsform, UID und Datum. Die Texte sind eine sorgfältig erstellte Grundlage, ersetzen aber keine Rechtsberatung.', 'textmaker' )
+		esc_html__( 'Achtung: Die Vorlagen ersetzen den bisherigen Inhalt beider Seiten. Sie sind vollständig ausgefüllt, sind aber eine fachliche Grundlage und ersetzen keine Rechtsberatung. Ändern sich Hosting, Rechtsform oder eingebundene Dienste, gehört der Text angepasst.', 'textmaker' )
 	);
 
 	echo '<form method="post" onsubmit="return confirm(' . esc_attr( wp_json_encode( __( 'Datenschutz und Impressum wirklich mit den Vorlagen überschreiben?', 'textmaker' ) ) ) . ');">';

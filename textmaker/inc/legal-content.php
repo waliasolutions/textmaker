@@ -133,7 +133,9 @@ Telefon: {{telefon}}</p>
 
 <h4>4.1 Hosting</h4>
 
-<p>Unsere Website und die darüber eingehenden Daten werden bei [Name und Sitz des Hosting-Anbieters einsetzen] gehostet. Mit dem Anbieter besteht ein Vertrag zur Auftragsbearbeitung. Die Server stehen in [Standort der Server einsetzen].</p>
+<p>Unsere Website und die darüber eingehenden Daten werden bei der Metanet AG, Zürich, gehostet. Die Server stehen in der Schweiz und unterstehen damit ausschliesslich Schweizer Recht. Mit dem Anbieter besteht ein Vertrag zur Auftragsbearbeitung im Sinne von Art. 9 revDSG.</p>
+
+<p>Das bedeutet: Ihre Anfragen und die uns übermittelten Dokumente verlassen die Schweiz nicht. Eine Bekanntgabe ins Ausland findet nur bei den unter Ziffer 6 genannten Diensten statt und betrifft nicht Ihre Texte.</p>
 
 <h4>4.2 Google Tag Manager</h4>
 
@@ -161,7 +163,9 @@ Telefon: {{telefon}}</p>
 
 <h3>6. Bekanntgabe ins Ausland</h3>
 
-<p>Einzelne der oben genannten Dienstleister haben ihren Sitz im Ausland, unter anderem in den USA. Eine Bekanntgabe ins Ausland erfolgt nur, wenn der betreffende Staat über einen angemessenen Datenschutz verfügt (Anhang 1 DSV) oder wenn geeignete Garantien im Sinne von Art. 16 Abs. 2 revDSG bestehen — insbesondere die vom Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) anerkannten Standardvertragsklauseln oder, für Anbieter in den USA, eine Zertifizierung nach dem Swiss-U.S. Data Privacy Framework.</p>
+<p>Ihre Anfragen, Ihre Texte und Ihre Vertragsdaten werden ausschliesslich in der Schweiz bearbeitet und gespeichert.</p>
+
+<p>Eine Bekanntgabe ins Ausland ergibt sich nur aus den unter Ziffer 4 genannten eingebundenen Diensten — namentlich Google (Irland) und Elfsight, wobei dabei Daten auch in die USA gelangen können. Sie erfolgt nur, wenn der betreffende Staat über einen angemessenen Datenschutz verfügt (Anhang 1 DSV) oder wenn geeignete Garantien im Sinne von Art. 16 Abs. 2 revDSG bestehen — insbesondere die vom Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) anerkannten Standardvertragsklauseln oder, für Anbieter in den USA, eine Zertifizierung nach dem Swiss-U.S. Data Privacy Framework.</p>
 
 <p>Wir weisen darauf hin, dass in einzelnen Staaten Behörden auf Daten zugreifen können, ohne dass Sie davon Kenntnis erhalten oder dagegen wirksam vorgehen können.</p>
 
@@ -212,7 +216,7 @@ Telefon: {{telefon}}</p>
 
 <p>Wir können diese Datenschutzerklärung anpassen, wenn sich unsere Bearbeitungen oder die rechtlichen Vorgaben ändern. Massgebend ist die jeweils auf dieser Seite veröffentlichte Fassung.</p>
 
-<p><em>Stand: [Datum einsetzen]</em></p>
+<p><em>Stand: 3. August 2026</em></p>
 HTML;
 }
 
@@ -240,10 +244,7 @@ Telefon: {{telefon}}</p>
 
 <h3>Unternehmensangaben</h3>
 
-<p>Rechtsform: [Rechtsform einsetzen, z. B. Einzelunternehmen]<br>
-Unternehmens-Identifikationsnummer (UID): [CHE-xxx.xxx.xxx einsetzen, falls vorhanden]<br>
-Mehrwertsteuernummer: [einsetzen, falls mehrwertsteuerpflichtig]<br>
-Handelsregistereintrag: [Register und Nummer einsetzen, falls eingetragen]</p>
+<p>{{firma}} ist nicht im Handelsregister eingetragen und nicht mehrwertsteuerpflichtig. Eine Unternehmens-Identifikationsnummer (UID) besteht nicht. Unsere Preise verstehen sich daher ohne Mehrwertsteuer.</p>
 
 <h3>Haftungsausschluss</h3>
 

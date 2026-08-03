@@ -88,12 +88,14 @@ Das Impressum enthält verantwortliche Stelle, Unternehmensangaben, Haftungs- un
 Urheberrechtshinweise sowie die Zeile **Realisation Website: Walia Solutions**
 (<https://walia-solutions.ch>).
 
-**Vor der Veröffentlichung zu füllen** — die Stellen stehen in eckigen Klammern im Text:
+Die Vorlagen sind vollständig ausgefüllt — es sind keine Platzhalter mehr zu ersetzen:
 
-| Seite        | Offen |
-|--------------|-------|
-| Datenschutz  | Name und Sitz des Hosting-Anbieters, Standort der Server, Datum der Fassung |
-| Impressum    | Rechtsform, UID, Mehrwertsteuernummer, Handelsregistereintrag |
+- **Hosting:** Metanet AG, Zürich, Server in der Schweiz. Weil die Daten das Land nicht verlassen,
+  sagt die Erklärung das ausdrücklich: Anfragen und gelieferte Texte bleiben in der Schweiz, eine
+  Bekanntgabe ins Ausland betrifft nur die eingebundenen Dienste von Google und Elfsight.
+- **Unternehmensangaben:** kein Handelsregistereintrag, keine Mehrwertsteuerpflicht, keine UID.
+  Das steht so im Impressum, zusammen mit dem Hinweis, dass die Preise ohne Mehrwertsteuer gelten.
+- **Stand der Datenschutzerklärung:** 3. August 2026.
 
 Die Vorlagen sind eine sorgfältig erstellte Grundlage, **aber keine Rechtsberatung**. Lass sie vor
 dem Livegang von einer rechtskundigen Person prüfen. Beim Einsetzen wird die Datenschutzseite
