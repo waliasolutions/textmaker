@@ -64,6 +64,41 @@ Der Import sucht darum in dieser Reihenfolge:
 Builder-Seitentemplate werden entfernt), damit WordPress den Inhalt selbst rendert. Seiten, die
 bereits echten Inhalt in `post_content` haben, bleiben unangetastet.
 
+### Datenschutz und Impressum nach revDSG
+
+Der zweite Knopf, **Vorlagen einsetzen**, schreibt neue Fassungen von Datenschutzerklärung und
+Impressum auf dem Stand des revidierten Schweizer Datenschutzgesetzes (revDSG) und der
+Datenschutzverordnung (DSV) — dem für 2026 massgeblichen Stand. Berücksichtigt sind ausserdem die
+EU-DSGVO für Anfragen aus dem EWR und das Swiss-U.S. Data Privacy Framework für Datenflüsse in
+die USA. Die AGB bleiben unangetastet; das sind eure Geschäftsbedingungen.
+
+Firmenname, Adresse, E-Mail und Telefon werden aus den Theme-Optionen eingesetzt. Anders als beim
+Import aus der Live-Domain wird hier bewusst **überschrieben** — deshalb steht eine Rückfrage davor.
+
+Die Datenschutzerklärung deckt ab: verantwortliche Stelle, Kontaktformular samt Datei-Upload,
+gelieferte Texte als Auftragsbearbeitung, Vertrags- und Rechnungsdaten, Server-Protokolle,
+Kontaktwege inklusive WhatsApp, Cookies nach Art. 45c FMG, Google Tag Manager, die eingebundenen
+Google-Rezensionen, Bekanntgabe ins Ausland nach Art. 16 revDSG, Aufbewahrungsfristen inklusive
+der zehnjährigen Pflicht nach Art. 958f OR, Datensicherheit und Meldepflicht nach Art. 24 revDSG,
+Betroffenenrechte nach Art. 25/28/32 revDSG, EDÖB als Aufsichtsbehörde sowie den Ausschluss
+automatisierter Einzelentscheidungen samt Hinweis auf den unterstützenden Einsatz von
+Sprachtechnologie.
+
+Das Impressum enthält verantwortliche Stelle, Unternehmensangaben, Haftungs- und
+Urheberrechtshinweise sowie die Zeile **Realisation Website: Walia Solutions**
+(<https://walia-solutions.ch>).
+
+**Vor der Veröffentlichung zu füllen** — die Stellen stehen in eckigen Klammern im Text:
+
+| Seite        | Offen |
+|--------------|-------|
+| Datenschutz  | Name und Sitz des Hosting-Anbieters, Standort der Server, Datum der Fassung |
+| Impressum    | Rechtsform, UID, Mehrwertsteuernummer, Handelsregistereintrag |
+
+Die Vorlagen sind eine sorgfältig erstellte Grundlage, **aber keine Rechtsberatung**. Lass sie vor
+dem Livegang von einer rechtskundigen Person prüfen. Beim Einsetzen wird die Datenschutzseite
+zugleich als WordPress-Datenschutzseite hinterlegt.
+
 Zeigt die Quelldomain woanders hin (Staging, alte Domain), lässt sie sich per Filter umbiegen:
 
 ```php

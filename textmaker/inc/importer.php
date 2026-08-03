@@ -205,6 +205,8 @@ function textmaker_render_import_page(): void {
 			$notices = textmaker_run_media_import();
 		} elseif ( 'legal' === $action ) {
 			$notices = textmaker_import_legal_pages();
+		} elseif ( 'legal_template' === $action ) {
+			$notices = textmaker_apply_legal_templates();
 		} elseif ( 'reset' === $action ) {
 			delete_option( TEXTMAKER_IMPORT_MAP );
 			$notices[] = array( 'success', __( 'Die Import-Historie wurde zurückgesetzt. Der nächste Durchlauf lädt alle Dateien erneut.', 'textmaker' ) );
@@ -293,6 +295,23 @@ function textmaker_render_import_page(): void {
 	wp_nonce_field( 'textmaker_import' );
 	echo '<input type="hidden" name="textmaker_import_action" value="legal">';
 	printf( '<button type="submit" class="button">%s</button>', esc_html__( 'Rechtliche Seiten übernehmen', 'textmaker' ) );
+	echo '</form>';
+
+	echo '<hr>';
+	printf( '<h2>%s</h2>', esc_html__( 'Datenschutz und Impressum nach revDSG', 'textmaker' ) );
+	printf(
+		'<p style="max-width:60em;">%s</p>',
+		esc_html__( 'Setzt aktuelle Vorlagen für Datenschutzerklärung und Impressum ein — auf dem Stand des revidierten Schweizer Datenschutzgesetzes samt Verordnung, mit Hinweisen zur EU-DSGVO und zum Swiss-U.S. Data Privacy Framework. Adresse, E-Mail und Telefon werden aus den Theme-Optionen eingesetzt. Die AGB bleiben unangetastet.', 'textmaker' )
+	);
+	printf(
+		'<p class="notice notice-warning" style="padding:.75rem 1rem;max-width:60em;">%s</p>',
+		esc_html__( 'Achtung: Die Vorlagen ersetzen den bisherigen Inhalt beider Seiten. Sie enthalten Stellen in eckigen Klammern, die vor der Veröffentlichung zu füllen sind — Hosting-Anbieter, Serverstandort, Rechtsform, UID und Datum. Die Texte sind eine sorgfältig erstellte Grundlage, ersetzen aber keine Rechtsberatung.', 'textmaker' )
+	);
+
+	echo '<form method="post" onsubmit="return confirm(' . esc_attr( wp_json_encode( __( 'Datenschutz und Impressum wirklich mit den Vorlagen überschreiben?', 'textmaker' ) ) ) . ');">';
+	wp_nonce_field( 'textmaker_import' );
+	echo '<input type="hidden" name="textmaker_import_action" value="legal_template">';
+	printf( '<button type="submit" class="button button-primary">%s</button>', esc_html__( 'Vorlagen einsetzen', 'textmaker' ) );
 	echo '</form>';
 
 	echo '<hr>';
@@ -688,6 +707,67 @@ function textmaker_import_legal_pages(): array {
 				$source
 			),
 		);
+	}
+
+	return $notices;
+}
+
+/**
+ * Vorlagen für Datenschutz und Impressum einsetzen.
+ *
+ * Anders als beim Import aus der Live-Domain wird hier bewusst überschrieben —
+ * darum steht davor eine Rückfrage.
+ *
+ * @return array<int, array{0: string, 1: string}> Meldungen für die Ausgabe.
+ */
+function textmaker_apply_legal_templates(): array {
+	require_once TEXTMAKER_DIR . '/inc/legal-content.php';
+
+	$notices = array();
+
+	foreach ( textmaker_legal_templates() as $slug => $template ) {
+		$page = textmaker_find_page( $slug, $template['title'] );
+
+		$data = array(
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => $template['title'],
+			'post_name'    => $slug,
+			'post_content' => $template['content'],
+		);
+
+		if ( $page instanceof WP_Post ) {
+			$data['ID'] = $page->ID;
+		}
+
+		$result = wp_insert_post( $data, true );
+
+		if ( is_wp_error( $result ) ) {
+			$notices[] = array(
+				'error',
+				sprintf( /* translators: %s: Seitentitel. */ __( '%s konnte nicht gespeichert werden.', 'textmaker' ), $template['title'] ),
+			);
+			continue;
+		}
+
+		textmaker_detach_builder( (int) $result );
+
+		$notices[] = array(
+			'success',
+			sprintf(
+				/* translators: 1: Seitentitel, 2: Bearbeitungslink. */
+				__( '%1$s wurde eingesetzt. Bitte die Stellen in eckigen Klammern füllen: %2$s', 'textmaker' ),
+				$template['title'],
+				(string) get_edit_post_link( (int) $result, '' )
+			),
+		);
+	}
+
+	// Datenschutzseite auch für WordPress selbst hinterlegen.
+	$privacy = get_page_by_path( 'datenschutz' );
+
+	if ( $privacy instanceof WP_Post ) {
+		update_option( 'wp_page_for_privacy_policy', $privacy->ID );
 	}
 
 	return $notices;

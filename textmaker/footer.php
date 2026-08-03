@@ -26,6 +26,13 @@ $textmaker_phone    = textmaker_option( 'footer_phone' );
 						<?php endforeach; ?>
 					</ul>
 				<?php endif; ?>
+
+				<?php if ( textmaker_show_section( 'faq' ) && array() !== textmaker_get_items( 'tm_faq', 1 ) ) : ?>
+					<button class="faq-trigger" type="button" data-faq-open aria-haspopup="dialog">
+						<?php echo esc_html( textmaker_option( 'faq_heading' ) ); ?>
+						<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.4 1.4 12 8l-6.6 6.6L4 13.2 9.2 8 4 2.8z"/></svg>
+					</button>
+				<?php endif; ?>
 			</div>
 
 			<div class="contact-block">
@@ -93,6 +100,12 @@ $textmaker_phone    = textmaker_option( 'footer_phone' );
 		</div>
 	</div>
 </footer>
+
+<?php
+if ( textmaker_show_section( 'faq' ) ) {
+	get_template_part( 'template-parts/faq', 'dialog' );
+}
+?>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true"
 	aria-label="<?php esc_attr_e( 'Grossansicht', 'textmaker' ); ?>" hidden>

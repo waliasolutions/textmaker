@@ -420,10 +420,63 @@ button { font: inherit; color: inherit; }
   letter-spacing: -.01em;
 }
 
-/* --- Fragen & Antworten -------------------------------------------------- */
+/* --- Fragen & Antworten (Dialog aus der Fusszeile) ----------------------- */
+
+.faq-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: 1.5rem;
+  padding: .6rem 1rem;
+  background: transparent;
+  border: 1px solid var(--on-dark-line);
+  border-radius: var(--radius);
+  color: var(--on-dark);
+  font-size: var(--s-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease;
+}
+.faq-trigger:hover { border-color: var(--accent); background: rgba(241, 243, 241, .08); }
+.faq-trigger svg { width: 11px; height: 11px; fill: var(--accent); }
+
+.faq-dialog {
+  width: min(720px, calc(100vw - 2rem));
+  max-height: min(80svh, 780px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--text);
+  box-shadow: 0 30px 70px -30px rgba(10, 14, 12, .7);
+  overflow: hidden;
+}
+.faq-dialog::backdrop { background: rgba(16, 19, 21, .72); backdrop-filter: blur(3px); }
+.faq-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.35rem clamp(1.25rem, 4vw, 2rem);
+  border-bottom: 1px solid var(--line);
+}
+.faq-dialog-head h2 { font-size: var(--s-xl); }
+.faq-dialog-head .lbtn { border-color: var(--line); color: var(--text); width: 38px; height: 38px; }
+.faq-dialog-head .lbtn:hover { background: var(--shell); }
+.faq-dialog-body {
+  padding: 0 clamp(1.25rem, 4vw, 2rem) clamp(1.25rem, 4vw, 2rem);
+  overflow-y: auto;
+  max-height: calc(min(80svh, 780px) - 72px);
+}
+.faq-dialog-intro {
+  color: var(--muted);
+  font-size: var(--s-sm);
+  padding-block: 1.25rem .25rem;
+  max-width: 60ch;
+}
 
 .faq {
-  margin-top: 2.25rem;
+  margin-top: 1.25rem;
   max-width: 78ch;
   border-top: 1px solid var(--line);
 }
@@ -1008,7 +1061,6 @@ textarea { resize: vertical; min-height: 112px; }
       <ul class="nav" id="hauptmenue">
         <li><a href="#lektorat">Lektorat-Service</a></li>
         <li><a href="#preise">Preise</a></li>
-        <li><a href="#fragen">Fragen</a></li>
         <li><a href="#referenzen">Referenzen</a></li>
         <li><a href="#anfragen">Offerte anfragen</a></li>
       </ul>
@@ -1261,43 +1313,6 @@ textarea { resize: vertical; min-height: 112px; }
   </section>
 
 
-  <!-- ================= Fragen & Antworten ================= -->
-  <section class="band" id="fragen">
-    <div class="frame">
-      <div class="section-head" data-reveal>
-        <h2>Häufige Fragen</h2>
-        <p>Kurz und direkt beantwortet. Fehlt deine Frage? Schreib uns.</p>
-      </div>
-
-      <div class="faq" data-reveal>
-        <details class="faq-item" open>
-          <summary><span>Wie lange dauert ein Lektorat?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
-          <div class="faq-answer"><p>Je nach Textmenge 1 bis 5 Tage, oder nach Absprache. Bei dringenden Aufträgen sind wir auch kurzfristig erreichbar — Montag bis Sonntag.</p></div>
-        </details>
-        <details class="faq-item">
-          <summary><span>Was kostet ein Lektorat?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
-          <div class="faq-answer"><p>Der Stundenansatz beträgt CHF 135.00 für Firmen und CHF 95.00 für Studierende mit Abschlussarbeiten. Für den konkreten Aufwand erstellen wir vorab eine Offerte.</p></div>
-        </details>
-        <details class="faq-item">
-          <summary><span>Welche Texte lektoriert ihr?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
-          <div class="faq-answer"><p>Magazine, Berichte, Broschüren, Bücher und Abschlussarbeiten — Diplom-, Bachelor- und Masterarbeiten. Wir bringen Erfahrung aus dem Journalismus mit und haben auch mit medizinischen Texten gearbeitet.</p></div>
-        </details>
-        <details class="faq-item">
-          <summary><span>In welchen Sprachen arbeitet ihr?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
-          <div class="faq-answer"><p>Deutsch ist unsere Hauptsprache. Korrekturen und Übersetzungen auf Französisch und Englisch übernehmen wir auf Anfrage gemeinsam mit unseren Partnern.</p></div>
-        </details>
-        <details class="faq-item">
-          <summary><span>Wie erhalte ich meinen Text zurück?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
-          <div class="faq-answer"><p>Als Word-Dokument mit nachverfolgten Änderungen. Du siehst jede Korrektur, kannst sie einzeln annehmen oder ablehnen und über «Markup: keine» jederzeit die bereinigte Fassung lesen.</p></div>
-        </details>
-        <details class="faq-item">
-          <summary><span>Was bedeutet das 4-Augen-Prinzip?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
-          <div class="faq-answer"><p>Jeder Text wird von zwei Personen geprüft. Das erhöht die Genauigkeit und bringt sprachliche Feinheiten ans Licht, die einer einzelnen Prüfung entgehen könnten.</p></div>
-        </details>
-      </div>
-    </div>
-  </section>
-
   <!-- ================= Anfrage ================= -->
   <section class="band" id="anfragen">
     <div class="frame">
@@ -1432,6 +1447,11 @@ textarea { resize: vertical; min-height: 112px; }
           <li>Texterstellung auf Anfrage</li>
           <li>Formatierungsaufgaben auf Anfrage</li>
         </ul>
+
+        <button class="faq-trigger" type="button" data-faq-open aria-haspopup="dialog">
+          Häufige Fragen
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.4 1.4 12 8l-6.6 6.6L4 13.2 9.2 8 4 2.8z"/></svg>
+        </button>
       </div>
 
       <div class="contact-block">
@@ -1461,6 +1481,45 @@ textarea { resize: vertical; min-height: 112px; }
     </div>
   </div>
 </footer>
+
+<!-- ================= Fragen & Antworten ================= -->
+<dialog class="faq-dialog" id="faq-dialog" aria-labelledby="faq-dialog-title">
+  <div class="faq-dialog-head">
+    <h2 id="faq-dialog-title">Häufige Fragen</h2>
+    <button class="lbtn" type="button" data-faq-close aria-label="Schliessen">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M14.1 3.3 12.7 1.9 8 6.6 3.3 1.9 1.9 3.3 6.6 8l-4.7 4.7 1.4 1.4L8 9.4l4.7 4.7 1.4-1.4L9.4 8z"/></svg>
+    </button>
+  </div>
+  <div class="faq-dialog-body">
+    <p class="faq-dialog-intro">Kurz und direkt beantwortet. Fehlt deine Frage? Schreib uns.</p>
+    <div class="faq">
+        <details class="faq-item">
+          <summary><span>Wie lange dauert ein Lektorat?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
+          <div class="faq-answer"><p>Je nach Textmenge 1 bis 5 Tage, oder nach Absprache. Bei dringenden Aufträgen sind wir auch kurzfristig erreichbar — Montag bis Sonntag.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary><span>Was kostet ein Lektorat?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
+          <div class="faq-answer"><p>Der Stundenansatz beträgt CHF 135.00 für Firmen und CHF 95.00 für Studierende mit Abschlussarbeiten. Für den konkreten Aufwand erstellen wir vorab eine Offerte.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary><span>Welche Texte lektoriert ihr?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
+          <div class="faq-answer"><p>Magazine, Berichte, Broschüren, Bücher und Abschlussarbeiten — Diplom-, Bachelor- und Masterarbeiten. Wir bringen Erfahrung aus dem Journalismus mit und haben auch mit medizinischen Texten gearbeitet.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary><span>In welchen Sprachen arbeitet ihr?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
+          <div class="faq-answer"><p>Deutsch ist unsere Hauptsprache. Korrekturen und Übersetzungen auf Französisch und Englisch übernehmen wir auf Anfrage gemeinsam mit unseren Partnern.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary><span>Wie erhalte ich meinen Text zurück?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
+          <div class="faq-answer"><p>Als Word-Dokument mit nachverfolgten Änderungen. Du siehst jede Korrektur, kannst sie einzeln annehmen oder ablehnen und über «Markup: keine» jederzeit die bereinigte Fassung lesen.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary><span>Was bedeutet das 4-Augen-Prinzip?</span><svg class="faq-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v12H7z"/><path d="M2 7h12v2H2z"/></svg></summary>
+          <div class="faq-answer"><p>Jeder Text wird von zwei Personen geprüft. Das erhöht die Genauigkeit und bringt sprachliche Feinheiten ans Licht, die einer einzelnen Prüfung entgehen könnten.</p></div>
+        </details>
+    </div>
+  </div>
+</dialog>
 
 <!-- ================= Lightbox ================= -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Grossansicht" hidden>
@@ -1627,6 +1686,21 @@ textarea { resize: vertical; min-height: 112px; }
     else if (e.key === "ArrowLeft") move(-1);
     else if (e.key === "ArrowRight") move(1);
   });
+
+  /* --- Fragen & Antworten ------------------------------------------------- */
+  const faqDialog = document.getElementById("faq-dialog");
+
+  if (faqDialog) {
+    document.querySelectorAll("[data-faq-open]").forEach(trigger => {
+      trigger.addEventListener("click", () => faqDialog.showModal());
+    });
+
+    faqDialog.addEventListener("click", event => {
+      if (event.target === faqDialog || event.target.closest("[data-faq-close]")) {
+        faqDialog.close();
+      }
+    });
+  }
 
   /* --- Scroll-Reveal ------------------------------------------------------ */
   if (reduced) {

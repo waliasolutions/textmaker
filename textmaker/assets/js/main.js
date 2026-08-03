@@ -173,6 +173,30 @@
 		});
 	}
 
+	/* --- Fragen & Antworten ------------------------------------------------- */
+	const faqDialog = document.getElementById('faq-dialog');
+
+	if (faqDialog) {
+		// Fokusfalle, Escape und Hintergrund bringt <dialog> selbst mit.
+		document.querySelectorAll('[data-faq-open]').forEach(trigger => {
+			trigger.addEventListener('click', () => {
+				if (typeof faqDialog.showModal === 'function') {
+					faqDialog.showModal();
+				} else {
+					faqDialog.setAttribute('open', '');
+				}
+			});
+		});
+
+		faqDialog.addEventListener('click', event => {
+			// Klick auf den Hintergrund schliesst — der Dialog selbst füllt nur
+			// seine eigene Fläche, alles ausserhalb trifft das Element.
+			if (event.target === faqDialog || event.target.closest('[data-faq-close]')) {
+				faqDialog.close();
+			}
+		});
+	}
+
 	/* --- Scroll-Reveal ------------------------------------------------------ */
 	const revealables = document.querySelectorAll('[data-reveal]');
 

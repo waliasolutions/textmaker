@@ -97,7 +97,7 @@ function textmaker_sections(): array {
 		'reviews' => __( 'Kundenmeinungen', 'textmaker' ),
 		'steps'   => __( 'Ablauf der Korrektur', 'textmaker' ),
 		'prices'  => __( 'Lektorate / Preise', 'textmaker' ),
-		'faq'     => __( 'Fragen & Antworten', 'textmaker' ),
+		'faq'     => __( 'Fragen & Antworten (Link in der Fusszeile)', 'textmaker' ),
 		'contact' => __( 'Offerte anfragen', 'textmaker' ),
 		'refs'    => __( 'Referenzen', 'textmaker' ),
 	);

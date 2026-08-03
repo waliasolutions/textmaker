@@ -126,7 +126,7 @@ function textmaker_customizer_sections(): array {
 		),
 		'faq'      => array(
 			'title'       => __( 'Fragen & Antworten', 'textmaker' ),
-			'description' => __( 'Die Fragen selbst werden unter „teXtmaker → Fragen & Antworten“ gepflegt. Sie erscheinen auf der Startseite und werden zusätzlich maschinenlesbar ausgeliefert, damit Suchmaschinen und KI-Assistenten daraus zitieren können.', 'textmaker' ),
+			'description' => __( 'Die Fragen selbst werden unter „teXtmaker → Fragen & Antworten“ gepflegt. Sie öffnen sich über einen Link in der Fusszeile und werden zusätzlich maschinenlesbar ausgeliefert, damit Suchmaschinen und KI-Assistenten daraus zitieren können.', 'textmaker' ),
 			'fields'      => array(
 				'faq_heading' => array(
 					'label' => __( 'Überschrift', 'textmaker' ),

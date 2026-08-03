@@ -503,10 +503,78 @@ button { font: inherit; color: inherit; }
 }
 .review figcaption b { color: var(--text); font-weight: 600; }
 
-/* --- Fragen & Antworten -------------------------------------------------- */
+/* --- Fragen & Antworten (Dialog aus der Fusszeile) ----------------------- */
+
+.faq-trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: .5rem;
+	margin-top: 1.5rem;
+	padding: .6rem 1rem;
+	background: transparent;
+	border: 1px solid var(--on-dark-line);
+	border-radius: var(--radius);
+	color: var(--on-dark);
+	font-size: var(--s-sm);
+	font-weight: 500;
+	cursor: pointer;
+	transition: border-color .2s ease, background .2s ease;
+}
+.faq-trigger:hover {
+	border-color: var(--accent);
+	background: rgba(241, 243, 241, .08);
+}
+.faq-trigger svg {
+	width: 11px;
+	height: 11px;
+	fill: var(--accent);
+}
+
+.faq-dialog {
+	width: min(720px, calc(100vw - 2rem));
+	max-height: min(80svh, 780px);
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius);
+	background: var(--paper);
+	color: var(--text);
+	box-shadow: 0 30px 70px -30px rgba(10, 14, 12, .7);
+	overflow: hidden;
+}
+.faq-dialog::backdrop {
+	background: rgba(16, 19, 21, .72);
+	backdrop-filter: blur(3px);
+}
+.faq-dialog-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.5rem;
+	padding: 1.35rem clamp(1.25rem, 4vw, 2rem);
+	border-bottom: 1px solid var(--line);
+}
+.faq-dialog-head h2 { font-size: var(--s-xl); }
+.faq-dialog-head .lbtn {
+	border-color: var(--line);
+	color: var(--text);
+	width: 38px;
+	height: 38px;
+}
+.faq-dialog-head .lbtn:hover { background: var(--shell); }
+.faq-dialog-body {
+	padding: 0 clamp(1.25rem, 4vw, 2rem) clamp(1.25rem, 4vw, 2rem);
+	overflow-y: auto;
+	max-height: calc(min(80svh, 780px) - 72px);
+}
+.faq-dialog-intro {
+	color: var(--muted);
+	font-size: var(--s-sm);
+	padding-block: 1.25rem .25rem;
+	max-width: 60ch;
+}
 
 .faq {
-	margin-top: 2.25rem;
+	margin-top: 1.25rem;
 	max-width: 78ch;
 	border-top: 1px solid var(--line);
 }
