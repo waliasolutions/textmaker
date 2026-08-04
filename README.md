@@ -231,8 +231,14 @@ Inhalt der Seiten. Der Reihe nach:
 
 1. **Permalinks speichern.** **Einstellungen → Permalinks** öffnen und ohne Änderung speichern.
    Das schreibt die Regeln und die `.htaccess` neu und behebt den Fall meistens.
-2. **`.htaccess` prüfen.** Sie muss im WordPress-Wurzelverzeichnis liegen, für den Webserver
-   schreibbar sein und den Standardblock enthalten:
+2. **`.htaccess` anlegen.** Fehlt die Datei, reicht Apache die Anfrage gar nicht erst an WordPress
+   weiter: Unter `/agb/` sucht der Server einen echten Ordner, findet keinen und antwortet mit 404.
+   Eine fertige Vorlage samt Erklärung liegt im Repository unter
+   [`htaccess-vorlage.txt`](htaccess-vorlage.txt). Inhalt in eine Datei namens `.htaccess`
+   kopieren, ins WordPress-Wurzelverzeichnis legen (dort, wo `wp-config.php` steht — **nicht** in
+   den Theme-Ordner), Rechte 644, danach Permalinks speichern.
+
+   Der Pflichtteil ist kurz:
 
    ```apache
    # BEGIN WordPress
@@ -246,6 +252,9 @@ Inhalt der Seiten. Der Reihe nach:
    </IfModule>
    # END WordPress
    ```
+
+   Die Vorlage enthält darüber hinaus optionale Blöcke für Komprimierung, Browser-Zwischenspeicher
+   und Sicherheits-Header — bewusst getrennt, damit sich ein Fehler eindeutig zuordnen lässt.
 
 3. **Doppelte Seiten ausschliessen.** Unter **teXtmaker → Bilder importieren** zeigt die Tabelle
    *Zustand der rechtlichen Seiten* für jeden erwarteten Pfad alle passenden Seiten mit ihrem

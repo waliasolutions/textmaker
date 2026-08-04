@@ -1,0 +1,123 @@
+# =============================================================================
+# .htaccess für textmaker.ch
+# =============================================================================
+#
+# Diese Datei muss im WORDPRESS-WURZELVERZEICHNIS liegen — dort, wo auch
+# wp-config.php, wp-load.php und die Ordner wp-admin, wp-content und
+# wp-includes stehen. NICHT im Theme-Ordner.
+#
+# Sie muss exakt  .htaccess  heissen, mit führendem Punkt und ohne Endung.
+# Viele FTP-Programme und Datei-Manager blenden solche Dateien aus; dort
+# zuerst „versteckte Dateien anzeigen“ einschalten.
+#
+# Rechte: 644
+#
+# Nach dem Hochladen einmal Einstellungen → Permalinks öffnen und ohne
+# Änderung speichern.
+#
+# -----------------------------------------------------------------------------
+# TEIL 1 — Pflicht. Genau dieser Block behebt den 404 auf Unterseiten.
+# -----------------------------------------------------------------------------
+#
+# Er sagt Apache: Existiert die angefragte Datei oder der Ordner nicht,
+# reiche die Anfrage an index.php weiter. Ohne ihn sucht Apache unter
+# /agb/ nach einem echten Ordner, findet keinen und antwortet mit 404 —
+# WordPress wird nie gefragt. Mit der Einstellung „Einfach“ funktioniert es
+# trotzdem, weil dort alles über /index.php?page_id=… läuft.
+#
+# WordPress verwaltet diesen Block selbst. Alles zwischen den BEGIN- und
+# END-Zeilen kann beim Speichern der Permalinks überschrieben werden —
+# eigene Regeln gehören deshalb ausserhalb.
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+
+# -----------------------------------------------------------------------------
+# TEIL 2 — Optional. Erst ergänzen, wenn Teil 1 nachweislich wirkt.
+# -----------------------------------------------------------------------------
+#
+# So lässt sich bei einem Fehler eindeutig zuordnen, woran es lag.
+
+# --- Verzeichnisse nicht auflisten -------------------------------------------
+# Ohne das zeigt Apache in Ordnern ohne index-Datei den Inhalt an.
+Options -Indexes
+
+# --- Zugriff auf heikle Dateien sperren --------------------------------------
+<FilesMatch "^(wp-config\.php|\.htaccess|\.htpasswd|readme\.html|license\.txt|error_log)$">
+	Require all denied
+</FilesMatch>
+
+# --- Ausführung von PHP im Upload-Ordner unterbinden --------------------------
+# Greift, falls über eine Lücke eine PHP-Datei in die Mediathek gelangt.
+# Das Kontaktformular lädt nur Dokumente hoch, kein PHP — diese Regel ist
+# also ohne Nebenwirkung.
+<Directory "wp-content/uploads">
+	<FilesMatch "\.(php|phtml|php[0-9])$">
+		Require all denied
+	</FilesMatch>
+</Directory>
+
+# --- Komprimierung ------------------------------------------------------------
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+	AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+	AddOutputFilterByType DEFLATE application/json application/xml
+	AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# --- Ablaufzeiten im Browser-Zwischenspeicher ---------------------------------
+# Bilder und Schriften ändern sich selten. CSS und JS bekommen vom Theme
+# einen Zeitstempel an die Adresse gehängt, daher ist ein Jahr unbedenklich:
+# Nach einer Änderung ändert sich die Adresse und der Browser lädt neu.
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresByType image/jpeg        "access plus 1 year"
+	ExpiresByType image/png         "access plus 1 year"
+	ExpiresByType image/webp        "access plus 1 year"
+	ExpiresByType image/svg+xml     "access plus 1 year"
+	ExpiresByType image/x-icon      "access plus 1 year"
+	ExpiresByType font/woff2        "access plus 1 year"
+	ExpiresByType text/css          "access plus 1 year"
+	ExpiresByType application/javascript "access plus 1 year"
+	ExpiresByType text/html         "access plus 0 seconds"
+</IfModule>
+
+# --- Sicherheits-Header -------------------------------------------------------
+<IfModule mod_headers.c>
+	# Verhindert, dass die Seite in einem fremden Rahmen eingebettet wird.
+	Header always set X-Frame-Options "SAMEORIGIN"
+	# Der Browser hält sich an den gemeldeten Dateityp und rät nicht.
+	Header always set X-Content-Type-Options "nosniff"
+	# Beim Wechsel auf eine fremde Domain wird nur die Domain übermittelt.
+	Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# --- HTTPS erzwingen ----------------------------------------------------------
+# Nur einschalten, wenn ein gültiges Zertifikat vorliegt und die Website
+# bereits unter https erreichbar ist. Sonst sperrt man sich aus.
+# Metanet leitet in der Regel schon serverseitig um; dann bleibt dieser
+# Block auskommentiert.
+#
+# <IfModule mod_rewrite.c>
+# RewriteEngine On
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
+
+# --- xmlrpc.php sperren -------------------------------------------------------
+# Häufiges Ziel automatisierter Anmeldeversuche. NICHT einschalten, wenn die
+# WordPress-App auf dem Handy, Jetpack oder ein Dienst genutzt wird, der
+# darüber zugreift.
+#
+# <Files xmlrpc.php>
+# 	Require all denied
+# </Files>
