@@ -168,20 +168,12 @@ function textmaker_ensure_menus(): void {
 		$menu_id = textmaker_create_menu( __( 'Hauptmenü', 'textmaker' ) );
 
 		if ( $menu_id > 0 ) {
-			// Kein „Home“-Eintrag: das Logo führt bereits zur Startseite.
-			$anchors = array(
-				'#lektorat'   => __( 'Lektorat-Service', 'textmaker' ),
-				'#preise'     => __( 'Preise', 'textmaker' ),
-				'#referenzen' => __( 'Referenzen', 'textmaker' ),
-				'#anfragen'   => __( 'Offerte anfragen', 'textmaker' ),
-			);
-
-			foreach ( $anchors as $anchor => $label ) {
+			foreach ( textmaker_default_menu_items() as $entry ) {
 				textmaker_add_menu_item(
 					$menu_id,
 					array(
-						'menu-item-title' => $label,
-						'menu-item-url'   => home_url( '/' ) . $anchor,
+						'menu-item-title' => $entry['label'],
+						'menu-item-url'   => home_url( '/' ) . $entry['url'],
 						'menu-item-type'  => 'custom',
 					)
 				);
@@ -193,15 +185,9 @@ function textmaker_ensure_menus(): void {
 
 	// Fussmenü „Rechtliches“ — nur mit bereits vorhandenen Seiten.
 	if ( empty( $locations['legal'] ) ) {
-		$legal = array(
-			'agb'         => __( 'AGB', 'textmaker' ),
-			'datenschutz' => __( 'Datenschutz', 'textmaker' ),
-			'impressum'   => __( 'Impressum', 'textmaker' ),
-		);
-
 		$items = array();
 
-		foreach ( $legal as $slug => $label ) {
+		foreach ( textmaker_legal_pages() as $slug => $label ) {
 			$page = get_page_by_path( $slug );
 
 			if ( $page instanceof WP_Post ) {

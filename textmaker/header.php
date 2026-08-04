@@ -68,19 +68,12 @@ defined( 'ABSPATH' ) || exit;
 			} else {
 				echo '<ul class="nav" id="hauptmenue">';
 
-				// Kein „Home“ — dafür ist das Logo da.
-				$textmaker_fallback = array(
-					'#lektorat'   => __( 'Lektorat-Service', 'textmaker' ),
-					'#preise'     => __( 'Preise', 'textmaker' ),
-					'#referenzen' => __( 'Referenzen', 'textmaker' ),
-					'#anfragen'   => __( 'Offerte anfragen', 'textmaker' ),
-				);
-
-				foreach ( $textmaker_fallback as $textmaker_url => $textmaker_label ) {
+				foreach ( textmaker_default_menu_items() as $textmaker_entry ) {
 					printf(
-						'<li><a href="%1$s">%2$s</a></li>',
-						esc_url( textmaker_absolute_anchor( (string) $textmaker_url ) ),
-						esc_html( $textmaker_label )
+						'<li class="menu-item%1$s"><a href="%2$s">%3$s</a></li>',
+						TEXTMAKER_CTA_ANCHOR === $textmaker_entry['url'] ? ' menu-item-cta' : '',
+						esc_url( textmaker_absolute_anchor( $textmaker_entry['url'] ) ),
+						esc_html( $textmaker_entry['label'] )
 					);
 				}
 

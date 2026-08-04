@@ -21,10 +21,8 @@ function textmaker_defaults(): array {
 		'hero_heading'      => 'Wir bringen deine Texte auf ein höheres Level.',
 		'hero_underline'    => 'Wir, höheres',
 		'hero_guarantee'    => 'Garantiert',
-		'hero_button_1'     => 'Preise|#preise',
-		'hero_button_2'     => 'Rezensionen|#rezensionen',
-		'hero_button_3'     => 'Ablauf Korrektur|#ablauf',
-		'hero_button_4'     => 'Kontaktformular|#anfragen',
+		'hero_button_1'     => 'Offerte anfragen|#anfragen',
+		'hero_button_2'     => 'Preise|#preise',
 
 		// Lektorat-Service.
 		'service_heading'   => 'Das korrigieren wir in deinen Magazinen, Berichten, Broschüren, Abschlussarbeiten und anderen Texten',
@@ -83,6 +81,60 @@ function textmaker_defaults(): array {
 		// Farben.
 		'accent_color'      => '#7ED321',
 		'ink_color'         => '#14181A',
+	);
+}
+
+/**
+ * Ziel des hervorgehobenen Menüpunkts.
+ *
+ * Daran erkennt das Theme, welcher Eintrag als Handlungsaufruf dargestellt
+ * wird — im automatisch angelegten Menü wie in einem selbst gebauten.
+ */
+const TEXTMAKER_CTA_ANCHOR = '#anfragen';
+
+/**
+ * Einträge des Hauptmenüs.
+ *
+ * Einzige Quelle für das Menü: Sie versorgt sowohl das beim Aktivieren
+ * angelegte WordPress-Menü als auch die Rückfall-Navigation, falls kein Menü
+ * zugewiesen ist. Kein „Home“ — dafür ist das Logo da.
+ *
+ * @return array<int, array{url: string, label: string}>
+ */
+function textmaker_default_menu_items(): array {
+	return array(
+		array(
+			'url'   => '#lektorat',
+			'label' => __( 'Lektorat-Service', 'textmaker' ),
+		),
+		array(
+			'url'   => '#preise',
+			'label' => __( 'Preise', 'textmaker' ),
+		),
+		array(
+			'url'   => '#referenzen',
+			'label' => __( 'Referenzen', 'textmaker' ),
+		),
+		array(
+			'url'   => TEXTMAKER_CTA_ANCHOR,
+			'label' => __( 'Offerte anfragen', 'textmaker' ),
+		),
+	);
+}
+
+/**
+ * Rechtliche Seiten des Themes.
+ *
+ * Einzige Quelle für Pfad und Titel: genutzt von den Vorlagen, vom Import und
+ * von der Rückfall-Liste in der Fusszeile.
+ *
+ * @return array<string, string> Pfad => Titel.
+ */
+function textmaker_legal_pages(): array {
+	return array(
+		'agb'         => __( 'AGB', 'textmaker' ),
+		'datenschutz' => __( 'Datenschutz', 'textmaker' ),
+		'impressum'   => __( 'Impressum', 'textmaker' ),
 	);
 }
 

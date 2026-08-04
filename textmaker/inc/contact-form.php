@@ -404,15 +404,14 @@ function textmaker_notification_recipient(): array {
 
 /**
  * Letzte Fehlermeldung des Mailversands.
+ *
+ * Gefüllt wird sie von textmaker_capture_mail_error() über den Hook
+ * `wp_mail_failed`. Fehlt sie, war der Fehlschlag ohne nähere Angabe.
  */
 function textmaker_last_mail_error(): string {
-	static $error = '';
+	$error = (string) get_option( 'textmaker_last_mail_error', '' );
 
-	if ( '' === $error ) {
-		$error = __( 'Der Mailversand wurde vom Server abgelehnt.', 'textmaker' );
-	}
-
-	return $error;
+	return '' !== $error ? $error : __( 'Der Mailversand wurde vom Server abgelehnt.', 'textmaker' );
 }
 
 /**

@@ -19,7 +19,7 @@ function textmaker_customizer_sections(): array {
 	return array(
 		'hero'     => array(
 			'title'       => __( 'Hero (Startbild)', 'textmaker' ),
-			'description' => __( 'Überschrift und die vier Buttons im Startbild. Buttons im Format „Beschriftung|Ziel“ — das Ziel darf ein Anker (#preise) oder eine vollständige URL sein.', 'textmaker' ),
+			'description' => __( 'Überschrift und die beiden Buttons im Startbild. Buttons im Format „Beschriftung|Ziel“ — das Ziel darf ein Anker (#preise) oder eine vollständige URL sein.', 'textmaker' ),
 			'fields'      => array(
 				'hero_heading'   => array(
 					'label' => __( 'Überschrift', 'textmaker' ),
@@ -36,20 +36,14 @@ function textmaker_customizer_sections(): array {
 					'description' => __( 'Der eingerahmte Schriftzug unter der Überschrift. Leer lassen, um ihn auszublenden.', 'textmaker' ),
 				),
 				'hero_button_1'  => array(
-					'label' => __( 'Button 1', 'textmaker' ),
-					'type'  => 'text',
+					'label'       => __( 'Button 1 (Hauptaktion)', 'textmaker' ),
+					'type'        => 'text',
+					'description' => __( 'Wird hervorgehoben dargestellt.', 'textmaker' ),
 				),
 				'hero_button_2'  => array(
-					'label' => __( 'Button 2', 'textmaker' ),
-					'type'  => 'text',
-				),
-				'hero_button_3'  => array(
-					'label' => __( 'Button 3', 'textmaker' ),
-					'type'  => 'text',
-				),
-				'hero_button_4'  => array(
-					'label' => __( 'Button 4', 'textmaker' ),
-					'type'  => 'text',
+					'label'       => __( 'Button 2 (Nebenaktion)', 'textmaker' ),
+					'type'        => 'text',
+					'description' => __( 'Zurückhaltend dargestellt. Leer lassen, um nur einen Button zu zeigen.', 'textmaker' ),
 				),
 			),
 		),

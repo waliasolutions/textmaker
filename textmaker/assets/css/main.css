@@ -227,6 +227,9 @@ button { font: inherit; color: inherit; }
 	color: var(--on-dark);
 	display: inline-block;
 }
+/* Die Linie erscheint nur beim Überfahren. Vorher trug sie auch der aktive
+   Menüpunkt — dadurch sah die Startseite anders aus als AGB, Datenschutz und
+   Impressum, wo kein Eintrag aktiv ist. */
 .nav a::after {
 	content: "";
 	position: absolute;
@@ -240,7 +243,21 @@ button { font: inherit; color: inherit; }
 	transition: transform .25s ease;
 }
 .nav a:hover::after,
-.nav .current-menu-item > a::after { transform: scaleX(1); }
+.nav a:focus-visible::after { transform: scaleX(1); }
+
+/* Hervorgehobener Eintrag — „Offerte anfragen“. */
+.nav .menu-item-cta > a {
+	background: var(--accent);
+	color: var(--accent-ink);
+	font-weight: 600;
+	padding: .6rem 1.15rem;
+	border-radius: var(--radius);
+	transition: background .2s ease;
+}
+.nav .menu-item-cta > a::after { display: none; }
+.nav .menu-item-cta > a:hover {
+	background: color-mix(in srgb, var(--accent) 85%, #FFFFFF);
+}
 
 .burger {
 	display: none;
@@ -294,6 +311,14 @@ button { font: inherit; color: inherit; }
 	}
 	.nav a::after { display: none; }
 	.nav li:last-child a { border-bottom: 0; }
+
+	/* Im aufgeklappten Menü wird der Handlungsaufruf zur breiten Schaltfläche. */
+	.nav .menu-item-cta { margin-top: 1rem; }
+	.nav .menu-item-cta > a {
+		text-align: center;
+		border-bottom: 0;
+		padding: .9rem 1.15rem;
+	}
 
 	body.admin-bar .nav { inset: calc(var(--head-h) + 46px) 0 auto 0; }
 }
@@ -399,6 +424,19 @@ button { font: inherit; color: inherit; }
 	background: color-mix(in srgb, var(--accent) 85%, #FFFFFF);
 	border-color: color-mix(in srgb, var(--accent) 85%, #FFFFFF);
 	color: var(--accent-ink);
+}
+
+/* Nebenaktion: gleiche Grösse, weniger Gewicht — damit die Hauptaktion führt. */
+.btn--ghost {
+	background: transparent;
+	border-color: var(--on-dark-line);
+	color: var(--on-dark);
+	font-weight: 500;
+}
+.btn--ghost:hover {
+	background: rgba(241, 243, 241, .08);
+	border-color: rgba(241, 243, 241, .34);
+	color: var(--on-dark);
 }
 
 .scroll-cue {
@@ -1066,6 +1104,27 @@ button { font: inherit; color: inherit; }
 .page-body .entry h3 { font-size: var(--s-lg); }
 .page-body .entry ul,
 .page-body .entry ol { padding-left: 1.25rem; }
+
+/* Nummerierte Abschnitte in AGB, Datenschutz und Impressum: die Ziffer
+   steht in der Akzentfarbe, damit sie beim Überfliegen greifbar wird. */
+.page-body .entry h3 {
+	margin-top: 2.75rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--line);
+}
+.page-body .entry h3:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.page-body .entry h4 {
+	margin-top: 1.75rem;
+	font-size: var(--s-md);
+	font-weight: 700;
+}
+.page-body .entry .legal-signature {
+	margin-top: 2.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--line);
+	color: var(--muted);
+	font-size: var(--s-sm);
+}
 .page-body .entry li + li { margin-top: .4rem; }
 .page-body .entry a { color: var(--accent-deep); }
 .page-body .entry img { border-radius: var(--radius); }

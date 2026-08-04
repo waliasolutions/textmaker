@@ -74,7 +74,7 @@ $textmaker_phone    = textmaker_option( 'footer_phone' );
 					} else {
 						echo '<ul class="legal">';
 
-						foreach ( array( 'agb' => __( 'AGB', 'textmaker' ), 'datenschutz' => __( 'Datenschutz', 'textmaker' ), 'impressum' => __( 'Impressum', 'textmaker' ) ) as $textmaker_slug => $textmaker_label ) {
+						foreach ( textmaker_legal_pages() as $textmaker_slug => $textmaker_label ) {
 							$textmaker_page = get_page_by_path( $textmaker_slug );
 
 							if ( ! $textmaker_page instanceof WP_Post ) {

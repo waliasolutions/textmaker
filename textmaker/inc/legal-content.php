@@ -42,20 +42,25 @@ function textmaker_legal_placeholders(): array {
  * @return array<string, array{title: string, content: string}>
  */
 function textmaker_legal_templates(): array {
-	$templates = array(
-		'agb'         => array(
-			'title'   => __( 'AGB', 'textmaker' ),
-			'content' => textmaker_terms_template(),
-		),
-		'datenschutz' => array(
-			'title'   => __( 'Datenschutz', 'textmaker' ),
-			'content' => textmaker_privacy_template(),
-		),
-		'impressum'   => array(
-			'title'   => __( 'Impressum', 'textmaker' ),
-			'content' => textmaker_imprint_template(),
-		),
+	$content = array(
+		'agb'         => textmaker_terms_template(),
+		'datenschutz' => textmaker_privacy_template(),
+		'impressum'   => textmaker_imprint_template(),
 	);
+
+	// Titel und Reihenfolge kommen aus textmaker_legal_pages().
+	$templates = array();
+
+	foreach ( textmaker_legal_pages() as $slug => $title ) {
+		if ( ! isset( $content[ $slug ] ) ) {
+			continue;
+		}
+
+		$templates[ $slug ] = array(
+			'title'   => $title,
+			'content' => $content[ $slug ],
+		);
+	}
 
 	$placeholders = textmaker_legal_placeholders();
 
@@ -81,27 +86,43 @@ function textmaker_terms_template(): string {
 	return <<<'HTML'
 <h2>Die allgemeinen Geschäftsbedingungen</h2>
 
+<h3>1. Zustandekommen des Vertrags</h3>
+
 <p>Ein Vertrag kommt dann zustande, wenn die Kundin oder der Kunde eine Offerte von {{firma}} schriftlich oder telefonisch bestätigt.</p>
+
+<h3>2. Sorgfalt und Termine</h3>
 
 <p>{{firma}} verpflichtet sich, jeden Auftrag mit grösstmöglicher Sorgfalt und termingerecht auszuführen. Kann ein Auftrag aufgrund höherer Gewalt, Krankheit oder Unfall nicht zum vereinbarten Zeitpunkt abgeliefert werden, teilt {{firma}} dies der Kundin oder dem Kunden so rasch als möglich mit. Da unser Team aus mehreren Personen besteht, ist dieser Umstand unwahrscheinlich.</p>
 
-<p>{{firma}} kann nicht haftbar gemacht werden für Mängel, die bei der Einarbeitung oder Ausführung von Korrekturen oder der Erstellung von Texten beim Auftraggeber oder bei Dritten entstehen. Dies ist insbesondere deshalb wichtig, weil Kunden meistens nach der Bearbeitung einer Abschlussarbeit oder der Erstellung eines Textes an den Abschlussarbeiten oder Texten weiterarbeiten.</p>
+<h3>3. Haftung</h3>
 
-<p>{{firma}} verpflichtet sich zur bestmöglichen Reduzierung der Fehlerquote, ohne eine Garantie für eine absolute Fehlerfreiheit abzugeben. Je nachdem, wie viel neu formuliert werden musste und wie viele Fehler im Anfangstext enthalten waren, ist es vor allem in langen Texten möglich, dass einzelne Fehler stehen bleiben. Das wird von den Kunden anerkannt.</p>
+<p>{{firma}} kann nicht haftbar gemacht werden für Mängel, die bei der Einarbeitung/Ausführung von Korrekturen oder der Erstellung von Texten beim Auftraggeber oder bei Dritten entstehen. Dies ist insbesondere deshalb wichtig, weil Kunden meistens <strong>nach</strong> der Bearbeitung einer Abschlussarbeit oder der Erstellung eines Textes an den Abschlussarbeiten oder Texten weiterarbeiten.</p>
 
-<p>Betreffend Lektorate und Textkorrekturen: Wird die Sprache einer Abschlussarbeit nach der Korrektur bei {{firma}} mit einer Note von weniger als 4 (Schweizer Notensystem) bewertet, erstattet {{firma}} den ganzen Rechnungsbetrag der Kundin oder dem Kunden zurück. Eine Bedingung dafür ist, dass die Kundin oder der Kunde den durch {{firma}} korrigierten Text nicht nochmals stark verändert und dabei eine hohe Anzahl an Fehlern gemacht hat. Eine Rückerstattung wie im oben genannten Fall gab es seit der Gründung im Jahr 2011 noch nie.</p>
+<p>{{firma}} verpflichtet sich zur bestmöglichen Reduzierung der Fehlerquote (ohne eine Garantie für eine absolute Fehlerfreiheit abzugeben). Je nachdem, wie viel neu formuliert werden musste und wie viele Fehler im Anfangstext enthalten waren, ist es v. a. in langen Texten möglich, dass einzelne Fehler stehen bleiben. Das wird von den Kunden anerkannt.</p>
 
-<p>Kann ein Auftraggeber einen Text zum vereinbarten Zeitpunkt nicht liefern, muss er mit {{firma}} einen neuen Termin vereinbaren. Wird dieser erneut nicht wahrgenommen, stellt {{firma}} 70 % des für das Lektorat veranschlagten Betrags gemäss Offerte in Rechnung.</p>
+<h3>4. Notengarantie bei Abschlussarbeiten</h3>
 
-<p>Privatkunden (Lektorate): Die Zahlung der Rechnung erfolgt entweder als Vorauszahlung vor Beginn der Korrektur oder vor Rücksendung der korrigierten Arbeit an die Kundin oder den Kunden.</p>
+<p>Betr. Lektoraten/Textkorrekturen: Wird die Sprache einer Abschlussarbeit nach der Korrektur bei {{firma}} mit einer Note von weniger als 4 (Schweizer Notensystem) bewertet, erstattet {{firma}} den ganzen Rechnungsbetrag der Kundin oder dem Kunden zurück. Eine Bedingung dafür ist, dass die Kundin oder der Kunde den durch {{firma}} korrigierten Text nicht nochmals stark verändert hat und dabei eine hohe Anzahl an Fehlern gemacht hat. Eine Rückerstattung wie im oben genannten Fall gab es seit der Gründung im Jahr 2011 noch nie.</p>
 
-<p>Geschäftskunden (Texte und Lektorate): In der Regel folgt die Rechnungsstellung mit einer Frist von 20 Tagen ab Rechnungsdatum.</p>
+<h3>5. Verspätete Lieferung durch den Auftraggeber</h3>
+
+<p>Kann ein Auftraggeber einen Text zum vereinbarten Zeitpunkt nicht liefern, muss er mit {{firma}} einen neuen Termin vereinbaren. Wird dieser erneut nicht wahrgenommen, stellt {{firma}} 70 % des für das Lektorat veranschlagten Betrags (gemäss Offerte) in Rechnung.</p>
+
+<h3>6. Zahlungsbedingungen</h3>
+
+<p><strong>Privatkunden (Lektorate):</strong> Die Zahlung der Rechnung erfolgt entweder als Vorauszahlung vor Beginn der Korrektur oder vor Rücksendung der korrigierten Arbeit an die Kundin/den Kunden.</p>
+
+<p><strong>Geschäftskunden (Texte / Lektorate):</strong> In der Regel folgt die Rechnungsstellung mit einer Frist von 20 Tagen ab Rechnungsdatum.</p>
+
+<h3>7. Geheimhaltung</h3>
 
 <p>{{firma}} sichert dem Auftraggeber die Geheimhaltung im Sinne des Datenschutzgesetzes zu.</p>
 
-<p>Durch das Akzeptieren des Auftrags oder der Offerte akzeptiert der Kunde diese AGB.</p>
+<h3>8. Geltung</h3>
 
-<p>Sarmenstorf, 24. Mai 2022</p>
+<p>Durch das Akzeptieren des Auftrags/der Offerte akzeptiert der Kunde diese AGB.</p>
+
+<p class="legal-signature">Sarmenstorf, 24.05.2022</p>
 HTML;
 }
 

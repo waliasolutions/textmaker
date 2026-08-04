@@ -229,7 +229,19 @@ button { font: inherit; color: inherit; }
   transform-origin: left;
   transition: transform .25s ease;
 }
-.nav a:hover::after, .nav a[aria-current="page"]::after { transform: scaleX(1); }
+.nav a:hover::after, .nav a:focus-visible::after { transform: scaleX(1); }
+
+/* Hervorgehobener Eintrag — „Offerte anfragen“. */
+.nav .menu-item-cta > a {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  padding: .6rem 1.15rem;
+  border-radius: var(--radius);
+  transition: background .2s ease;
+}
+.nav .menu-item-cta > a::after { display: none; }
+.nav .menu-item-cta > a:hover { background: color-mix(in srgb, var(--accent) 85%, #FFFFFF); }
 
 .burger {
   display: none;
@@ -273,6 +285,8 @@ button { font: inherit; color: inherit; }
   .nav a { padding: .95rem 0; border-bottom: 1px solid var(--on-dark-line); font-size: var(--s-lg); display: block; }
   .nav a::after { display: none; }
   .nav li:last-child a { border-bottom: 0; }
+  .nav .menu-item-cta { margin-top: 1rem; }
+  .nav .menu-item-cta > a { text-align: center; border-bottom: 0; padding: .9rem 1.15rem; }
 }
 
 /* --- Hero ---------------------------------------------------------------- */
@@ -1062,7 +1076,7 @@ textarea { resize: vertical; min-height: 112px; }
         <li><a href="#lektorat">Lektorat-Service</a></li>
         <li><a href="#preise">Preise</a></li>
         <li><a href="#referenzen">Referenzen</a></li>
-        <li><a href="#anfragen">Offerte anfragen</a></li>
+        <li class="menu-item-cta"><a href="#anfragen">Offerte anfragen</a></li>
       </ul>
     </nav>
   </div>
@@ -1077,10 +1091,8 @@ textarea { resize: vertical; min-height: 112px; }
       <p class="guarantee">Garantiert</p>
 
       <div class="hero-actions">
-        <a class="btn" href="#preise">Preise</a>
-        <a class="btn" href="#rezensionen">Rezensionen</a>
-        <a class="btn" href="#ablauf">Ablauf Korrektur</a>
-        <a class="btn" href="#anfragen">Kontaktformular</a>
+        <a class="btn" href="#anfragen">Offerte anfragen</a>
+        <a class="btn btn--ghost" href="#preise">Preise</a>
       </div>
     </div>
 

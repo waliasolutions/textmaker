@@ -619,15 +619,9 @@ function textmaker_create_entry( array $item, int $attachment_id ): void {
  * @return array<int, array{0: string, 1: string}> Meldungen für die Ausgabe.
  */
 function textmaker_import_legal_pages(): array {
-	$pages = array(
-		'agb'         => __( 'AGB', 'textmaker' ),
-		'datenschutz' => __( 'Datenschutz', 'textmaker' ),
-		'impressum'   => __( 'Impressum', 'textmaker' ),
-	);
-
 	$notices = array();
 
-	foreach ( $pages as $slug => $title ) {
+	foreach ( textmaker_legal_pages() as $slug => $title ) {
 		$page = textmaker_find_page( $slug, $title );
 
 		// Bereits vorhandener, echter Inhalt bleibt unangetastet.

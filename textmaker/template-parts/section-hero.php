@@ -36,7 +36,8 @@ $textmaker_hero_style = '' !== $textmaker_hero_url
 
 		<div class="hero-actions">
 			<?php
-			for ( $textmaker_i = 1; $textmaker_i <= 4; $textmaker_i++ ) {
+			// Zwei Aktionen genügen: eine Hauptaktion, eine Alternative.
+			for ( $textmaker_i = 1; $textmaker_i <= 2; $textmaker_i++ ) {
 				list( $textmaker_label, $textmaker_target ) = textmaker_split_pair( textmaker_option( 'hero_button_' . $textmaker_i ) );
 
 				if ( '' === $textmaker_label ) {
@@ -44,7 +45,8 @@ $textmaker_hero_style = '' !== $textmaker_hero_url
 				}
 
 				printf(
-					'<a class="btn" href="%1$s">%2$s</a>',
+					'<a class="btn%1$s" href="%2$s">%3$s</a>',
+					2 === $textmaker_i ? ' btn--ghost' : '',
 					esc_url( '' !== $textmaker_target ? $textmaker_target : '#' ),
 					esc_html( $textmaker_label )
 				);

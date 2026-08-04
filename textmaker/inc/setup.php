@@ -278,6 +278,29 @@ function textmaker_nav_link_attributes( array $atts ): array {
 add_filter( 'nav_menu_link_attributes', 'textmaker_nav_link_attributes' );
 
 /**
+ * Den Eintrag „Offerte anfragen“ als Handlungsaufruf auszeichnen.
+ *
+ * Erkannt wird er am Ziel aus TEXTMAKER_CTA_ANCHOR — das funktioniert im
+ * automatisch angelegten Menü ebenso wie in einem selbst gebauten. Wer einen
+ * anderen Eintrag hervorheben will, vergibt ihm im Menü die CSS-Klasse `cta`
+ * (Ansicht anpassen → CSS-Klassen).
+ *
+ * @param array<int, string> $classes Klassen des Menüpunkts.
+ * @param object             $item    Menüpunkt.
+ * @return array<int, string>
+ */
+function textmaker_nav_cta_class( array $classes, object $item ): array {
+	$url = isset( $item->url ) ? (string) $item->url : '';
+
+	if ( str_ends_with( $url, TEXTMAKER_CTA_ANCHOR ) || in_array( 'cta', $classes, true ) ) {
+		$classes[] = 'menu-item-cta';
+	}
+
+	return $classes;
+}
+add_filter( 'nav_menu_css_class', 'textmaker_nav_cta_class', 10, 2 );
+
+/**
  * Emoji-Skript entfernen — spart einen Request, ohne Funktionsverlust.
  */
 function textmaker_disable_emojis(): void {
