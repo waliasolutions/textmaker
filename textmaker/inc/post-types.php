@@ -164,6 +164,44 @@ function textmaker_render_dashboard(): void {
 
 	echo '</div>';
 
+	// Startseite und Menüs.
+	$setup_result = get_transient( 'textmaker_setup_result' );
+
+	if ( is_string( $setup_result ) && '' !== $setup_result ) {
+		delete_transient( 'textmaker_setup_result' );
+		printf( '<div class="notice notice-success" style="margin-top:1.5rem;"><p>%s</p></div>', esc_html( $setup_result ) );
+	}
+
+	$front_id = (int) get_option( 'page_on_front' );
+
+	echo '<hr style="margin:2rem 0 1.5rem;">';
+	printf( '<h2>%s</h2>', esc_html__( 'Startseite und Menüs', 'textmaker' ) );
+
+	if ( $front_id > 0 && 'page' === get_option( 'show_on_front' ) ) {
+		printf(
+			'<p style="max-width:60em;">%1$s <a href="%2$s"><strong>%3$s</strong></a></p>',
+			esc_html__( 'Als Startseite ist eingetragen:', 'textmaker' ),
+			esc_url( (string) get_edit_post_link( $front_id ) ),
+			esc_html( (string) get_the_title( $front_id ) )
+		);
+	} else {
+		printf(
+			'<p class="notice notice-warning" style="padding:.75rem 1rem;max-width:60em;">%s</p>',
+			esc_html__( 'Es ist noch keine statische Startseite eingetragen. Der Knopf unten legt die Seite „Home“ an, trägt sie ein und baut die Menüs auf.', 'textmaker' )
+		);
+	}
+
+	printf(
+		'<p class="description" style="max-width:60em;">%s</p>',
+		esc_html__( 'Legt die Seite „Home“ an, trägt sie unter „Einstellungen → Lesen“ ein, baut Haupt- und Fussmenü auf und erneuert die Umschreiberegeln für /sitemap.xml. Eine bereits gewählte Startseite bleibt unangetastet.', 'textmaker' )
+	);
+
+	echo '<form method="post">';
+	wp_nonce_field( 'textmaker_run_setup' );
+	echo '<input type="hidden" name="textmaker_run_setup" value="1">';
+	printf( '<button type="submit" class="button">%s</button>', esc_html__( 'Startseite und Menüs einrichten', 'textmaker' ) );
+	echo '</form>';
+
 	// Zustellung des Kontaktformulars prüfen.
 	$result = get_transient( 'textmaker_test_mail_result' );
 

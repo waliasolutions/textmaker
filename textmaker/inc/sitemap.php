@@ -146,12 +146,13 @@ function textmaker_robots_txt( string $output, string $public ): string {
 add_filter( 'robots_txt', 'textmaker_robots_txt', 10, 2 );
 
 /**
- * Umschreiberegeln nach dem Themewechsel neu aufbauen.
+ * Umschreiberegeln neu aufbauen.
  *
  * Ohne das liefert /sitemap.xml einen 404, bis jemand die Permalinks speichert.
+ * Aufgerufen wird die Funktion aus textmaker_run_setup() in inc/activation.php —
+ * dort, wo auch Startseite und Menüs eingerichtet werden.
  */
 function textmaker_flush_rewrites(): void {
 	textmaker_sitemap_rewrite();
 	flush_rewrite_rules();
 }
-add_action( 'after_switch_theme', 'textmaker_flush_rewrites', 20 );

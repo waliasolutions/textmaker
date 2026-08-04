@@ -22,6 +22,10 @@ Das Repository enthält zwei Dinge:
    keine Rolle.
 4. **teXtmaker → Bilder importieren** öffnen und den Import starten (siehe unten).
 
+Die Startseite legt das Theme selbst an. Sollte sie fehlen — etwa weil eine neue Version über die
+bestehende gelegt wurde, ohne das Theme zu wechseln —, hilft **teXtmaker → Übersicht → Startseite
+und Menüs einrichten**.
+
 Elementor, Elementor Pro, GTM4WP und WooCommerce werden nicht mehr benötigt. Solange sie noch
 aktiv sind, entfernt das Theme ihre Frontend-Assets von der Startseite.
 
@@ -64,13 +68,19 @@ Der Import sucht darum in dieser Reihenfolge:
 Builder-Seitentemplate werden entfernt), damit WordPress den Inhalt selbst rendert. Seiten, die
 bereits echten Inhalt in `post_content` haben, bleiben unangetastet.
 
-### Datenschutz und Impressum nach revDSG
+### Rechtliche Seiten aus dem Theme einsetzen
 
-Der zweite Knopf, **Vorlagen einsetzen**, schreibt neue Fassungen von Datenschutzerklärung und
-Impressum auf dem Stand des revidierten Schweizer Datenschutzgesetzes (revDSG) und der
-Datenschutzverordnung (DSV) — dem für 2026 massgeblichen Stand. Berücksichtigt sind ausserdem die
-EU-DSGVO für Anfragen aus dem EWR und das Swiss-U.S. Data Privacy Framework für Datenflüsse in
-die USA. Die AGB bleiben unangetastet; das sind eure Geschäftsbedingungen.
+Der zweite Knopf, **Vorlagen einsetzen**, schreibt AGB, Datenschutzerklärung und Impressum aus
+Vorlagen, die im Theme liegen. Das ist der zuverlässige Weg: Er braucht weder die Live-Domain noch
+die Daten des alten Page-Builders.
+
+Datenschutz und Impressum sind auf dem Stand des revidierten Schweizer Datenschutzgesetzes
+(revDSG) und der Datenschutzverordnung (DSV) — dem für 2026 massgeblichen Stand. Berücksichtigt
+sind ausserdem die EU-DSGVO für Anfragen aus dem EWR und das Swiss-U.S. Data Privacy Framework für
+Datenflüsse in die USA. Die **AGB** sind inhaltlich unverändert übernommen; es sind eure
+Geschäftsbedingungen, nicht unsere. Ort und Datum am Ende („Sarmenstorf, 24. Mai 2022“) halten
+fest, wann die Bedingungen erlassen wurden, und bleiben deshalb stehen — bei der nächsten
+inhaltlichen Überarbeitung gehört die Zeile aktualisiert.
 
 Firmenname, Adresse, E-Mail und Telefon werden aus den Theme-Optionen eingesetzt. Anders als beim
 Import aus der Live-Domain wird hier bewusst **überschrieben** — deshalb steht eine Rückfrage davor.

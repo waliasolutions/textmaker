@@ -43,6 +43,10 @@ function textmaker_legal_placeholders(): array {
  */
 function textmaker_legal_templates(): array {
 	$templates = array(
+		'agb'         => array(
+			'title'   => __( 'AGB', 'textmaker' ),
+			'content' => textmaker_terms_template(),
+		),
 		'datenschutz' => array(
 			'title'   => __( 'Datenschutz', 'textmaker' ),
 			'content' => textmaker_privacy_template(),
@@ -60,6 +64,45 @@ function textmaker_legal_templates(): array {
 	}
 
 	return $templates;
+}
+
+/**
+ * Allgemeine Geschäftsbedingungen.
+ *
+ * Inhaltlich unveränderte Fassung der bisherigen AGB — es sind eure
+ * Geschäftsbedingungen, nicht unsere. Übernommen wurden sie hierher, damit sie
+ * nicht mehr von den Daten des alten Page-Builders abhängen.
+ *
+ * Ort und Datum am Ende sind bewusst so belassen: Sie halten fest, wann und wo
+ * die Bedingungen erlassen wurden. Bei der nächsten inhaltlichen Überarbeitung
+ * gehört diese Zeile aktualisiert.
+ */
+function textmaker_terms_template(): string {
+	return <<<'HTML'
+<h2>Die allgemeinen Geschäftsbedingungen</h2>
+
+<p>Ein Vertrag kommt dann zustande, wenn die Kundin oder der Kunde eine Offerte von {{firma}} schriftlich oder telefonisch bestätigt.</p>
+
+<p>{{firma}} verpflichtet sich, jeden Auftrag mit grösstmöglicher Sorgfalt und termingerecht auszuführen. Kann ein Auftrag aufgrund höherer Gewalt, Krankheit oder Unfall nicht zum vereinbarten Zeitpunkt abgeliefert werden, teilt {{firma}} dies der Kundin oder dem Kunden so rasch als möglich mit. Da unser Team aus mehreren Personen besteht, ist dieser Umstand unwahrscheinlich.</p>
+
+<p>{{firma}} kann nicht haftbar gemacht werden für Mängel, die bei der Einarbeitung oder Ausführung von Korrekturen oder der Erstellung von Texten beim Auftraggeber oder bei Dritten entstehen. Dies ist insbesondere deshalb wichtig, weil Kunden meistens nach der Bearbeitung einer Abschlussarbeit oder der Erstellung eines Textes an den Abschlussarbeiten oder Texten weiterarbeiten.</p>
+
+<p>{{firma}} verpflichtet sich zur bestmöglichen Reduzierung der Fehlerquote, ohne eine Garantie für eine absolute Fehlerfreiheit abzugeben. Je nachdem, wie viel neu formuliert werden musste und wie viele Fehler im Anfangstext enthalten waren, ist es vor allem in langen Texten möglich, dass einzelne Fehler stehen bleiben. Das wird von den Kunden anerkannt.</p>
+
+<p>Betreffend Lektorate und Textkorrekturen: Wird die Sprache einer Abschlussarbeit nach der Korrektur bei {{firma}} mit einer Note von weniger als 4 (Schweizer Notensystem) bewertet, erstattet {{firma}} den ganzen Rechnungsbetrag der Kundin oder dem Kunden zurück. Eine Bedingung dafür ist, dass die Kundin oder der Kunde den durch {{firma}} korrigierten Text nicht nochmals stark verändert und dabei eine hohe Anzahl an Fehlern gemacht hat. Eine Rückerstattung wie im oben genannten Fall gab es seit der Gründung im Jahr 2011 noch nie.</p>
+
+<p>Kann ein Auftraggeber einen Text zum vereinbarten Zeitpunkt nicht liefern, muss er mit {{firma}} einen neuen Termin vereinbaren. Wird dieser erneut nicht wahrgenommen, stellt {{firma}} 70 % des für das Lektorat veranschlagten Betrags gemäss Offerte in Rechnung.</p>
+
+<p>Privatkunden (Lektorate): Die Zahlung der Rechnung erfolgt entweder als Vorauszahlung vor Beginn der Korrektur oder vor Rücksendung der korrigierten Arbeit an die Kundin oder den Kunden.</p>
+
+<p>Geschäftskunden (Texte und Lektorate): In der Regel folgt die Rechnungsstellung mit einer Frist von 20 Tagen ab Rechnungsdatum.</p>
+
+<p>{{firma}} sichert dem Auftraggeber die Geheimhaltung im Sinne des Datenschutzgesetzes zu.</p>
+
+<p>Durch das Akzeptieren des Auftrags oder der Offerte akzeptiert der Kunde diese AGB.</p>
+
+<p>Sarmenstorf, 24. Mai 2022</p>
+HTML;
 }
 
 /**

@@ -298,10 +298,10 @@ function textmaker_render_import_page(): void {
 	echo '</form>';
 
 	echo '<hr>';
-	printf( '<h2>%s</h2>', esc_html__( 'Datenschutz und Impressum nach revDSG', 'textmaker' ) );
+	printf( '<h2>%s</h2>', esc_html__( 'Rechtliche Seiten aus dem Theme einsetzen', 'textmaker' ) );
 	printf(
 		'<p style="max-width:60em;">%s</p>',
-		esc_html__( 'Setzt aktuelle Vorlagen für Datenschutzerklärung und Impressum ein — auf dem Stand des revidierten Schweizer Datenschutzgesetzes samt Verordnung, mit Hinweisen zur EU-DSGVO und zum Swiss-U.S. Data Privacy Framework. Adresse, E-Mail und Telefon werden aus den Theme-Optionen eingesetzt. Die AGB bleiben unangetastet.', 'textmaker' )
+		esc_html__( 'Setzt AGB, Datenschutzerklärung und Impressum ein. Datenschutz und Impressum sind auf dem Stand des revidierten Schweizer Datenschutzgesetzes samt Verordnung, mit Hinweisen zur EU-DSGVO und zum Swiss-U.S. Data Privacy Framework. Die AGB sind inhaltlich unverändert übernommen. Firmenname, Adresse, E-Mail und Telefon werden aus den Theme-Optionen eingesetzt — dafür braucht es weder die Live-Domain noch den alten Page-Builder.', 'textmaker' )
 	);
 	printf(
 		'<p class="notice notice-warning" style="padding:.75rem 1rem;max-width:60em;">%s</p>',

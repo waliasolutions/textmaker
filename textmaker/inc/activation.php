@@ -17,10 +17,77 @@ defined( 'ABSPATH' ) || exit;
  * Nach dem Wechsel auf dieses Theme einmalig einrichten.
  */
 function textmaker_after_switch_theme(): void {
-	textmaker_ensure_front_page();
-	textmaker_ensure_menus();
+	textmaker_run_setup();
 }
 add_action( 'after_switch_theme', 'textmaker_after_switch_theme' );
+
+/**
+ * Einrichtung nachholen, falls sie noch nie gelaufen ist.
+ *
+ * `after_switch_theme` feuert nur beim Wechsel auf das Theme. Wird eine neue
+ * Version über die bestehende gelegt — der übliche Weg bei einem Update —,
+ * bleibt der Haken aus, und es gäbe weder Startseite noch Menü. Deshalb wird
+ * beim nächsten Aufruf des Backends geprüft, ob die Einrichtung fehlt.
+ *
+ * Der Vermerk in den Optionen sorgt dafür, dass das genau einmal je Version
+ * geschieht: eine bewusst gewählte andere Startseite bleibt unangetastet.
+ */
+function textmaker_maybe_setup(): void {
+	if ( TEXTMAKER_VERSION === (string) get_option( 'textmaker_setup_version', '' ) ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	textmaker_run_setup();
+}
+add_action( 'admin_init', 'textmaker_maybe_setup' );
+
+/**
+ * Startseite, Menüs und Umschreiberegeln einrichten.
+ */
+function textmaker_run_setup(): void {
+	textmaker_ensure_front_page();
+	textmaker_ensure_menus();
+
+	if ( function_exists( 'textmaker_flush_rewrites' ) ) {
+		textmaker_flush_rewrites();
+	}
+
+	update_option( 'textmaker_setup_version', TEXTMAKER_VERSION, false );
+}
+
+/**
+ * Einrichtung von Hand auslösen.
+ */
+function textmaker_manual_setup(): void {
+	if ( ! isset( $_POST['textmaker_run_setup'] ) ) {
+		return;
+	}
+
+	check_admin_referer( 'textmaker_run_setup' );
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	// Erzwingt den Durchlauf auch dann, wenn der Vermerk bereits gesetzt ist.
+	delete_option( 'textmaker_setup_version' );
+	textmaker_run_setup();
+
+	set_transient(
+		'textmaker_setup_result',
+		sprintf(
+			/* translators: %s: Titel der Startseite. */
+			__( 'Eingerichtet. Die Startseite ist „%s“.', 'textmaker' ),
+			get_the_title( (int) get_option( 'page_on_front' ) )
+		),
+		60
+	);
+}
+add_action( 'admin_init', 'textmaker_manual_setup', 5 );
 
 /**
  * Startseite anlegen und als statische Startseite eintragen.
