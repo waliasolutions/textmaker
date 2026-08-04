@@ -46,15 +46,16 @@ function textmaker_maybe_setup(): void {
 add_action( 'admin_init', 'textmaker_maybe_setup' );
 
 /**
- * Startseite, Menüs und Umschreiberegeln einrichten.
+ * Startseite und Menüs einrichten.
+ *
+ * Die Umschreiberegeln werden hier bewusst nicht angefasst. Das Theme bringt
+ * keine eigenen mit, und ein Durchlauf von flush_rewrite_rules() zur falschen
+ * Zeit kann einen unvollständigen Regelsatz hinterlassen — dann liefern auch
+ * gewöhnliche Seiten einen 404.
  */
 function textmaker_run_setup(): void {
 	textmaker_ensure_front_page();
 	textmaker_ensure_menus();
-
-	if ( function_exists( 'textmaker_flush_rewrites' ) ) {
-		textmaker_flush_rewrites();
-	}
 
 	update_option( 'textmaker_setup_version', TEXTMAKER_VERSION, false );
 }

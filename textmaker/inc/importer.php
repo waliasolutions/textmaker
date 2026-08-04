@@ -297,6 +297,8 @@ function textmaker_render_import_page(): void {
 	printf( '<button type="submit" class="button">%s</button>', esc_html__( 'Rechtliche Seiten übernehmen', 'textmaker' ) );
 	echo '</form>';
 
+	textmaker_render_legal_diagnostics();
+
 	echo '<hr>';
 	printf( '<h2>%s</h2>', esc_html__( 'Rechtliche Seiten aus dem Theme einsetzen', 'textmaker' ) );
 	printf(
@@ -704,6 +706,117 @@ function textmaker_import_legal_pages(): array {
 	}
 
 	return $notices;
+}
+
+/**
+ * Zustand der rechtlichen Seiten anzeigen.
+ *
+ * Zeigt für jeden Pfad alle passenden Seiten — nicht nur die erste. Existieren
+ * zwei Seiten mit demselben Titel, hat WordPress der zweiten einen Pfad wie
+ * „agb-2“ gegeben; der Link in der Fusszeile führt dann auf die alte, leere
+ * Seite. Ohne diese Übersicht ist das kaum zu erkennen.
+ */
+function textmaker_render_legal_diagnostics(): void {
+	echo '<hr>';
+	printf( '<h2>%s</h2>', esc_html__( 'Zustand der rechtlichen Seiten', 'textmaker' ) );
+
+	echo '<table class="widefat striped" style="max-width:70em;"><thead><tr>';
+
+	foreach ( array(
+		__( 'Erwarteter Pfad', 'textmaker' ),
+		__( 'Seite', 'textmaker' ),
+		__( 'Tatsächlicher Pfad', 'textmaker' ),
+		__( 'Status', 'textmaker' ),
+		__( 'Inhalt', 'textmaker' ),
+		__( 'Adresse', 'textmaker' ),
+	) as $heading ) {
+		printf( '<th>%s</th>', esc_html( $heading ) );
+	}
+
+	echo '</tr></thead><tbody>';
+
+	foreach ( textmaker_legal_pages() as $slug => $title ) {
+		$pages = get_posts(
+			array(
+				'post_type'      => 'page',
+				'post_status'    => 'any',
+				'posts_per_page' => 10,
+				's'              => '',
+				'title'          => $title,
+			)
+		);
+
+		$by_path = get_page_by_path( $slug );
+
+		if ( $by_path instanceof WP_Post && ! in_array( $by_path->ID, wp_list_pluck( $pages, 'ID' ), true ) ) {
+			array_unshift( $pages, $by_path );
+		}
+
+		if ( array() === $pages ) {
+			printf(
+				'<tr><td><code>/%1$s/</code></td><td colspan="5">%2$s</td></tr>',
+				esc_html( $slug ),
+				esc_html__( 'Keine Seite vorhanden — „Vorlagen einsetzen“ legt sie an.', 'textmaker' )
+			);
+			continue;
+		}
+
+		foreach ( $pages as $index => $page ) {
+			$length   = mb_strlen( trim( wp_strip_all_tags( $page->post_content ) ) );
+			$mismatch = $page->post_name !== $slug;
+
+			printf(
+				'<tr>
+					<td><code>/%1$s/</code></td>
+					<td><a href="%2$s">%3$s</a> <span class="description">#%4$d</span></td>
+					<td>%5$s</td>
+					<td>%6$s</td>
+					<td>%7$s</td>
+					<td><a href="%8$s" target="_blank" rel="noopener">%8$s</a></td>
+				</tr>',
+				esc_html( 0 === $index ? $slug : '' ),
+				esc_url( (string) get_edit_post_link( $page->ID ) ),
+				esc_html( $page->post_title ),
+				(int) $page->ID,
+				$mismatch
+					? '<strong style="color:#b32d2e;">' . esc_html( $page->post_name ) . '</strong>'
+					: '<code>' . esc_html( $page->post_name ) . '</code>',
+				esc_html( (string) get_post_status( $page ) ),
+				0 === $length
+					? '<strong style="color:#b32d2e;">' . esc_html__( 'leer', 'textmaker' ) . '</strong>'
+					: esc_html( sprintf( /* translators: %d: Anzahl Zeichen. */ __( '%d Zeichen', 'textmaker' ), $length ) ),
+				esc_url( (string) get_permalink( $page ) )
+			);
+		}
+	}
+
+	echo '</tbody></table>';
+
+	printf(
+		'<p class="description" style="max-width:70em;margin-top:.75rem;">%s</p>',
+		esc_html__( 'Rot markiert: Der Pfad weicht vom erwarteten ab. Das passiert, wenn eine zweite Seite mit demselben Titel angelegt wurde — WordPress hängt dann eine Ziffer an. In dem Fall die überzählige Seite löschen und den Pfad der verbleibenden Seite auf den erwarteten Wert setzen.', 'textmaker' )
+	);
+
+	// Permalink-Struktur: die häufigste Ursache für 404 auf Unterseiten.
+	$structure = (string) get_option( 'permalink_structure', '' );
+
+	if ( '' === $structure ) {
+		printf(
+			'<div class="notice notice-warning" style="max-width:70em;"><p>%1$s</p><p><a class="button" href="%2$s">%3$s</a></p></div>',
+			esc_html__( 'Die Permalinks stehen auf „Einfach“. Die Seiten sind damit nur über eine Adresse mit Fragezeichen erreichbar. Auf „Beitragsname“ umstellen und speichern — das schreibt zugleich die Umschreiberegeln neu.', 'textmaker' ),
+			esc_url( admin_url( 'options-permalink.php' ) ),
+			esc_html__( 'Zu den Permalink-Einstellungen', 'textmaker' )
+		);
+	} else {
+		printf(
+			'<p style="max-width:70em;">%1$s <code>%2$s</code> — %3$s <a href="%4$s">%5$s</a></p>',
+			esc_html__( 'Permalink-Struktur:', 'textmaker' ),
+			esc_html( $structure ),
+			esc_html__( 'Liefern Unterseiten trotzdem einen 404, hilft fast immer: Permalinks einmal ohne Änderung speichern.', 'textmaker' ),
+			esc_url( admin_url( 'options-permalink.php' ) ),
+			esc_html__( 'Permalinks speichern', 'textmaker' )
+		);
+	}
 }
 
 /**

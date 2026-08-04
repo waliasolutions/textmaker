@@ -5,8 +5,13 @@
  * WordPress bringt zwar /wp-sitemap.xml mit, doch die meisten Werkzeuge und
  * Suchmaschinen suchen zuerst unter /sitemap.xml. Statt eine Datei ins
  * Wurzelverzeichnis zu legen — die bei jeder neuen Seite veralten würde —
- * wird die Adresse dynamisch bedient. Für die Aussenwelt liegt sie damit
- * genau dort, wo sie erwartet wird, ist aber immer aktuell.
+ * wird die Adresse dynamisch bedient.
+ *
+ * Bewusst ohne eigene Umschreiberegel: Eine Regel müsste beim Aktivieren
+ * eingespielt werden, und ein fehlgeschlagener Durchlauf hinterlässt einen
+ * halben Regelsatz — dann liefern plötzlich auch normale Seiten einen 404.
+ * Die Anfrage wird deshalb einfach am Pfad erkannt, bevor WordPress zu
+ * routen beginnt. Das kommt ohne jeden Eingriff in die Permalinks aus.
  *
  * @package teXtmaker
  */
@@ -14,38 +19,38 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Adresse /sitemap.xml anmelden.
- */
-function textmaker_sitemap_rewrite(): void {
-	add_rewrite_rule( '^sitemap\.xml$', 'index.php?textmaker_sitemap=1', 'top' );
-}
-add_action( 'init', 'textmaker_sitemap_rewrite' );
-
-/**
- * Eigene Abfragevariable bekannt machen.
+ * Angefragten Pfad relativ zur WordPress-Installation ermitteln.
  *
- * @param array<int, string> $vars Bestehende Variablen.
- * @return array<int, string>
+ * Berücksichtigt Installationen in einem Unterverzeichnis.
  */
-function textmaker_sitemap_query_var( array $vars ): array {
-	$vars[] = 'textmaker_sitemap';
+function textmaker_request_path(): string {
+	$request = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( (string) $_SERVER['REQUEST_URI'] ) ) : '';
+	$path    = (string) wp_parse_url( $request, PHP_URL_PATH );
+	$path    = trim( $path, '/' );
 
-	return $vars;
+	$base = trim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
+
+	if ( '' !== $base && str_starts_with( $path, $base ) ) {
+		$path = trim( substr( $path, strlen( $base ) ), '/' );
+	}
+
+	return $path;
 }
-add_filter( 'query_vars', 'textmaker_sitemap_query_var' );
 
 /**
- * Sitemap ausliefern.
+ * Sitemap ausliefern, wenn sie angefragt wurde.
  */
-function textmaker_render_sitemap(): void {
-	if ( '1' !== (string) get_query_var( 'textmaker_sitemap' ) ) {
+function textmaker_maybe_render_sitemap(): void {
+	if ( is_admin() || 'sitemap.xml' !== textmaker_request_path() ) {
 		return;
 	}
 
 	$entries = textmaker_sitemap_entries();
 
-	header( 'Content-Type: application/xml; charset=UTF-8' );
-	header( 'X-Robots-Tag: noindex, follow' );
+	if ( ! headers_sent() ) {
+		header( 'Content-Type: application/xml; charset=UTF-8' );
+		header( 'X-Robots-Tag: noindex, follow' );
+	}
 
 	echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 	echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
@@ -66,7 +71,7 @@ function textmaker_render_sitemap(): void {
 	echo '</urlset>';
 	exit;
 }
-add_action( 'template_redirect', 'textmaker_render_sitemap', 1 );
+add_action( 'parse_request', 'textmaker_maybe_render_sitemap', 1 );
 
 /**
  * Einträge der Sitemap zusammenstellen.
@@ -83,7 +88,7 @@ function textmaker_sitemap_entries(): array {
 	$entries = array(
 		array(
 			'loc'        => home_url( '/' ),
-			'lastmod'    => $front_id > 0 ? get_post_modified_time( 'c', true, $front_id ) : '',
+			'lastmod'    => $front_id > 0 ? (string) get_post_modified_time( 'c', true, $front_id ) : '',
 			'changefreq' => 'weekly',
 			'priority'   => '1.0',
 		),
@@ -105,12 +110,11 @@ function textmaker_sitemap_entries(): array {
 			continue;
 		}
 
-		// Von der Indexierung ausgenommene Seiten gehören nicht in die Sitemap.
 		if ( '1' === (string) get_post_meta( $post->ID, '_tm_noindex', true ) ) {
 			continue;
 		}
 
-		if ( 'private' === $post->post_status || post_password_required( $post ) ) {
+		if ( post_password_required( $post ) ) {
 			continue;
 		}
 
@@ -144,15 +148,3 @@ function textmaker_robots_txt( string $output, string $public ): string {
 	return $output . "\nSitemap: " . home_url( '/sitemap.xml' ) . "\n";
 }
 add_filter( 'robots_txt', 'textmaker_robots_txt', 10, 2 );
-
-/**
- * Umschreiberegeln neu aufbauen.
- *
- * Ohne das liefert /sitemap.xml einen 404, bis jemand die Permalinks speichert.
- * Aufgerufen wird die Funktion aus textmaker_run_setup() in inc/activation.php —
- * dort, wo auch Startseite und Menüs eingerichtet werden.
- */
-function textmaker_flush_rewrites(): void {
-	textmaker_sitemap_rewrite();
-	flush_rewrite_rules();
-}

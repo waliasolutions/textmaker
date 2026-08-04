@@ -215,10 +215,44 @@ Startseite sowie alle veröffentlichten Seiten und Beiträge mit ihrem Änderung
 Inhaltstypen des Themes bleiben draussen, sie haben keine eigenen Adressen. Die `robots.txt`
 verweist automatisch darauf.
 
-Die Adresse wird über eine Rewrite-Regel bedient, die beim Aktivieren des Themes eingerichtet
-wird. Liefert `/sitemap.xml` einen 404, einmal **Einstellungen → Permalinks** speichern.
+Die Adresse wird **ohne eigene Rewrite-Regel** bedient: Die Anfrage wird am Pfad erkannt, bevor
+WordPress zu routen beginnt. Das ist Absicht — eine eigene Regel müsste beim Aktivieren eingespielt
+werden, und ein fehlgeschlagener Durchlauf von `flush_rewrite_rules()` hinterlässt einen halben
+Regelsatz, worauf dann auch gewöhnliche Seiten einen 404 liefern. Das Theme fasst die Permalinks
+deshalb gar nicht erst an.
 
 WordPress' eigenes `/wp-sitemap.xml` bleibt daneben bestehen.
+
+## Wenn Unterseiten einen 404 liefern
+
+Sind AGB, Datenschutz und Impressum nur mit der Permalink-Einstellung „Einfach“ erreichbar, mit
+„Beitragsname“ dagegen nicht, liegt es an den Umschreiberegeln oder an der `.htaccess` — nicht am
+Inhalt der Seiten. Der Reihe nach:
+
+1. **Permalinks speichern.** **Einstellungen → Permalinks** öffnen und ohne Änderung speichern.
+   Das schreibt die Regeln und die `.htaccess` neu und behebt den Fall meistens.
+2. **`.htaccess` prüfen.** Sie muss im WordPress-Wurzelverzeichnis liegen, für den Webserver
+   schreibbar sein und den Standardblock enthalten:
+
+   ```apache
+   # BEGIN WordPress
+   <IfModule mod_rewrite.c>
+   RewriteEngine On
+   RewriteBase /
+   RewriteRule ^index\.php$ - [L]
+   RewriteCond %{REQUEST_FILENAME} !-f
+   RewriteCond %{REQUEST_FILENAME} !-d
+   RewriteRule . /index.php [L]
+   </IfModule>
+   # END WordPress
+   ```
+
+3. **Doppelte Seiten ausschliessen.** Unter **teXtmaker → Bilder importieren** zeigt die Tabelle
+   *Zustand der rechtlichen Seiten* für jeden erwarteten Pfad alle passenden Seiten mit ihrem
+   tatsächlichen Pfad, Status, Inhaltslänge und Adresse. Weicht ein Pfad ab — etwa `agb-2` statt
+   `agb` —, existiert die Seite doppelt: WordPress hängt bei gleichem Titel eine Ziffer an, und der
+   Link in der Fusszeile zeigt auf die alte, leere Seite. Dann die überzählige Seite löschen und den
+   Pfad der verbleibenden korrigieren.
 
 ## Website-Symbol (Favicon)
 
