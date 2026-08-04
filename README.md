@@ -233,12 +233,8 @@ Inhalt der Seiten. Der Reihe nach:
    Das schreibt die Regeln und die `.htaccess` neu und behebt den Fall meistens.
 2. **`.htaccess` anlegen.** Fehlt die Datei, reicht Apache die Anfrage gar nicht erst an WordPress
    weiter: Unter `/agb/` sucht der Server einen echten Ordner, findet keinen und antwortet mit 404.
-   Eine fertige Vorlage samt Erklärung liegt im Repository unter
-   [`htaccess-vorlage.txt`](htaccess-vorlage.txt). Inhalt in eine Datei namens `.htaccess`
-   kopieren, ins WordPress-Wurzelverzeichnis legen (dort, wo `wp-config.php` steht — **nicht** in
-   den Theme-Ordner), Rechte 644, danach Permalinks speichern.
-
-   Der Pflichtteil ist kurz:
+   Der vollständige Inhalt steht in [`htaccess-vorlage.txt`](htaccess-vorlage.txt) — mehr als diese
+   Zeilen braucht es nicht:
 
    ```apache
    # BEGIN WordPress
@@ -253,8 +249,16 @@ Inhalt der Seiten. Der Reihe nach:
    # END WordPress
    ```
 
-   Die Vorlage enthält darüber hinaus optionale Blöcke für Komprimierung, Browser-Zwischenspeicher
-   und Sicherheits-Header — bewusst getrennt, damit sich ein Fehler eindeutig zuordnen lässt.
+   Die Datei gehört ins WordPress-Wurzelverzeichnis, dort wo `wp-config.php` liegt — **nicht** in
+   den Theme-Ordner. Sie muss exakt `.htaccess` heissen; viele FTP-Programme blenden Dateien mit
+   führendem Punkt aus. Rechte 644. Danach Permalinks speichern.
+
+   Hinweise für den Fehlerfall: Erscheint statt des 404 plötzlich ein **500**, hat der Server ein
+   Problem mit der Datei — dann steht etwas darin, das die Hosting-Konfiguration nicht erlaubt.
+   `<Directory>`-Blöcke etwa sind in einer `.htaccess` grundsätzlich verboten, `Options` je nach
+   `AllowOverride` ebenfalls. Im Zweifel nur den obigen Block verwenden. Bleibt es beim **404**,
+   obwohl die Datei liegt, wird sie ignoriert — das deutet auf nginx statt Apache hin, und die
+   Regel muss dann vom Hoster gesetzt werden.
 
 3. **Doppelte Seiten ausschliessen.** Unter **teXtmaker → Bilder importieren** zeigt die Tabelle
    *Zustand der rechtlichen Seiten* für jeden erwarteten Pfad alle passenden Seiten mit ihrem
